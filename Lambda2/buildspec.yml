@@ -1,0 +1,58 @@
+version: 0.2
+phases:
+  install:
+    runtime-versions:
+      python: 3.8
+
+  pre_build:
+    commands:
+      - apt-get -qq update
+      - echo $HOME
+      - which python
+      - which python3
+      - python --version
+      - python3 --version 
+
+  build:
+    commands:
+      - pip3 install aws-sam-cli -qq
+      - sam --version 
+      - pip3 install awscli -qq
+      - pip3 install pytest -qq
+      - pip3 install pytest-cov -qq
+      - aws cloudformation package --template-file samTemplate.yml --s3-bucket $S3_Bucket --output-template-file outputSamTemplate.yaml
+      - python3 -B -m pytest -v Tests/ --cov=.
+      - python3 -m unittest Tests/test_handler.py
+
+artifacts:
+  type: zip
+  files:
+    - samTemplate.yaml
+    - outputSamTemplate.yaml
+
+
+# version: 0.2
+# phases:
+#   install:
+#     runtime-versions:
+#       python: 3.8
+#   pre_build:
+#     commands:
+#       - apt-get -qq  update
+#       - pip3 install aws-sam-cli -qq
+#       - pip3 install awscli -qq
+#       - pip3 install pytest -qq
+#       - pip3 install pytest-cov -qq
+#       - sam --version
+#   build:
+#     commands:
+#       - sam validate --template-file template.yaml
+#       - python3 -B -m pytest -v tests/ --cov=.
+#       - sam package --template-file template.yaml --output-template-file deploy.yml --s3-bucket samsclubgtt
+#       - sam validate --template-file deploy.yml
+#       - sam deploy --template-file deploy.yml --stack-name thisistest  --capabilities CAPABILITY_IAM
+
+# artifacts:
+#   files:
+#     - '**/*'
+#   name: myname-$(date +%Y-%m-%d)
