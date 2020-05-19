@@ -11,13 +11,3 @@ def lambda_handler(event, context):
     return {'statusCode': 200,
             'body': json.dumps(data),
             'headers': {'Content-Type': 'application/json'}}
-
-# This is Lambda2 with added pytest to test it.
-# import boto3
-# import json
-
-# ec2 = boto3.client('ec2')
-# def lambda_handler(event, context):
-#     print(event)
-#     response = ec2.describe_availability_zones()
-#     return {"statusCode": 200, "body": json.dumps(response)}
