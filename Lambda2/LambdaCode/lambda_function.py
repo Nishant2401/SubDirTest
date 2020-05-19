@@ -12,7 +12,7 @@ def lambda_handler(event, context):
             'body': json.dumps(data),
             'headers': {'Content-Type': 'application/json'}}
 
-# This is Lambda2
+# This is Lambda2 with some change.
 # import boto3
 # import json
 
