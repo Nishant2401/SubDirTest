@@ -20,7 +20,7 @@ phases:
       - pip3 install awscli -qq
       - pip3 install pytest -qq
       - pip3 install pytest-cov -qq
-      - aws cloudformation package --template-file samTemplate.yml --s3-bucket $S3_Bucket --output-template-file outputSamTemplate.yaml
+      - aws cloudformation package --template-file Lambdas/samTemplate.yml --s3-bucket $S3_Bucket --output-template-file outputSamTemplate.yaml
       - python3 -B -m pytest -v Lambda1/Tests/ --cov=.
       - python3 -B -m pytest -v Lambda2/Tests/ --cov=.
       # - python3 -m unittest Tests/test_handler.py
