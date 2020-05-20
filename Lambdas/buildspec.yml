@@ -11,7 +11,8 @@ phases:
       - which python
       - which python3
       - python --version
-      - python3 --version 
+      - python3 --version
+      - ls -la 
 
   build:
     commands:
