@@ -26,7 +26,7 @@ phases:
       #test
       - pip install --target ./package requests
       - ls -la
-      - cp package/* Lambdas/process-modem-data/lambda-code
+      - cp -r package/* Lambdas/process-modem-data/lambda-code
       - ls -l Lambdas/process-modem-data/lambda-code
       #- cd package
       - pwd
