@@ -12,7 +12,7 @@ phases:
       - which python3
       - python --version
       - python3 --version
-      - mkdir package
+     # - mkdir package
       - ls -la 
       - pwd
 
