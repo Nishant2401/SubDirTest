@@ -12,7 +12,6 @@ phases:
       - which python3
       - python --version
       - python3 --version
-     # - mkdir package
       - ls -la 
       - pwd
 
@@ -27,8 +26,13 @@ phases:
       #test
       - pip install --target ./package requests
       - ls -la
-      - cd package
-      #- zip -r9 {home}/process-modem-data.zip .
+      - cp package/* Lambdas/process-modem-data/lambda-code
+      - ls -l Lambdas/process-modem-data/lambda-code
+      #- cd package
+      - pwd
+      #- zip -r9 process-modem-data.zip .
+      - cp 
+
       #test
 
       - aws cloudformation package --template-file Lambdas/samTemplate.yml --s3-bucket $S3_Bucket --output-template-file outputSamTemplate.yaml
