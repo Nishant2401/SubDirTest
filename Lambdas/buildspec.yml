@@ -31,7 +31,6 @@ phases:
       #- cd package
       - pwd
       #- zip -r9 process-modem-data.zip .
-      - cp 
 
       #test
 
