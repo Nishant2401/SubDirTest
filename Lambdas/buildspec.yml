@@ -24,9 +24,9 @@ phases:
       - pip3 install pytest-cov -qq
 
       #test
-      - pip install --target ./package requests
+      - pip install --target Lambdas/process-modem-data/lambda-code requests
       - ls -la
-      - cp -r package/* Lambdas/process-modem-data/lambda-code
+      #- cp -r package/* Lambdas/process-modem-data/lambda-code
       - ls -l Lambdas/process-modem-data/lambda-code
       #- cd package
       - pwd
