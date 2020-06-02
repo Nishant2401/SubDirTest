@@ -8,6 +8,7 @@ Parameters:
     Default: "https://cbzvks1j2d.execute-api.us-west-2.amazonaws.com/Stage"
     Description: "CDF url for the lambda"
 
+
 Resources:
   ProcessModemData:
     Type: 'AWS::Serverless::Function'

@@ -10,9 +10,6 @@ phases:
       - apt-get -qq update
       - echo $HOME
       - which python3
-      - python3 --version
-      - ls -la 
-      - pwd
 
   build:
     commands:
@@ -27,6 +24,7 @@ phases:
       - ls -l lambdas/process-modem-data/lambda-code
       - python3 -B -m pytest -v lambdas/Lambda1/Tests/ --cov=.
       - python3 -B -m pytest -v lambdas/Lambda2/Tests/ --cov=.
+
 
 artifacts:
   type: zip
