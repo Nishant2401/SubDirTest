@@ -6,84 +6,30 @@ phases:
 
   pre_build:
     commands:
+      # Updating packages on container, and checking home path and python version for logging purposes.
       - apt-get -qq update
       - echo $HOME
-      - which python
       - which python3
-      - python --version
       - python3 --version
       - ls -la 
       - pwd
 
   build:
     commands:
-      #- pip3 install aws-sam-cli -qq
-      #- sam --version 
+    # Installing AWSCLI, AWS SAM CLI, PyTest, and Requests package
       - pip3 install awscli -qq
       - pip3 install pytest -qq
       - pip3 install pytest-cov -qq
+      - pip3 install --target lambdas/process-modem-data/lambda-code requests
 
-      #test
-      - pip install --target Lambdas/process-modem-data/lambda-code requests
-      - ls -la
-      #- cp -r package/* Lambdas/process-modem-data/lambda-code
+    # Executing SAM template
+      - aws cloudformation package --template-file lambdas/samTemplate.yml --s3-bucket $S3_Bucket --output-template-file outputSamTemplate.yaml
       - ls -l Lambdas/process-modem-data/lambda-code
-      #- cd package
-      - pwd
-      #- zip -r9 process-modem-data.zip .
-
-      #test
-
-      - aws cloudformation package --template-file Lambdas/samTemplate.yml --s3-bucket $S3_Bucket --output-template-file outputSamTemplate.yaml
-      - python3 -B -m pytest -v Lambdas/Lambda1/Tests/ --cov=.
-      - python3 -B -m pytest -v Lambdas/Lambda2/Tests/ --cov=.
-      # - python3 -m unittest Tests/test_handler.py
+      - python3 -B -m pytest -v lambdas/Lambda1/Tests/ --cov=.
+      - python3 -B -m pytest -v lambdas/Lambda2/Tests/ --cov=.
 
 artifacts:
   type: zip
   files:
     - samTemplate.yaml
     - outputSamTemplate.yaml
-
-
-
-    # # Change bucket to account specific lambda zips bucket
-    # bkt = 'gtt-lambda-zips-us-west-2'
-
-    # home = os.getcwd()
-    # # put required libraries in package directory
-    # cmd = 'pip install --target ./package requests'
-    # os.system(cmd)
-    # print(cmd)
-
-    # os.chdir('package')
-    # print('cd package')
-
-    # # zip package directory
-    # cmd = f'zip -r9 {home}/process-modem-data.zip .'
-    # os.system(cmd)
-    # print(cmd)
-
-    # os.chdir(home)
-    # print('cd ..')
-
-    # # add lambda to zip 
-    # cmd = 'zip -g process-modem-data.zip process-modem-data.py'
-    # os.system(cmd)
-    # print(cmd)
-
-    # # upload to s3 
-    # cmd = f'aws s3 cp process-modem-data.zip s3://{bkt}'
-    # os.system(cmd)
-    # print(cmd)
-
-    # # remove package directory
-    # cmd = 'rm -rf package'
-    # os.system(cmd)
-    # print(cmd)
-
-    # # remove zip file
-    # cmd = 'rm process-modem-data.zip'
-    # os.system(cmd)
-    # print(cmd)
-

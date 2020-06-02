@@ -1,12 +1,12 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: 'AWS::Serverless-2016-10-31'
 Description: Lambdas
+
 Parameters:
-  # Except the parameter GITREADTOKEN default value , do not change the default values of any other parameters.
-  BASEURL:
+  CDFURL:
     Type: "String"
     Default: "https://cbzvks1j2d.execute-api.us-west-2.amazonaws.com/Stage"
-    Description: "Base url for the lambda"
+    Description: "CDF url for the lambda"
 
 Resources:
   ProcessModemData:
@@ -21,12 +21,11 @@ Resources:
       Timeout: 30
       Environment:
         Variables:
-          BASE_URL: !Ref BASEURL
+          BASE_URL: !Ref CDFURL
           # CDF Contractor URL
 
 # Not specifying role because the scope of permissions is not known as of now.
 # It is created automatically with a logical ID of <function-logical-id>Role with basic execution permissions.
-
 
       #Role: 'arn:aws:iam::453698135753:role/service-role/InfraTest'
       #Not specifying role since the code executes in multiple accounts
