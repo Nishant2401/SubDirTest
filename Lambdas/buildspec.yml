@@ -17,8 +17,8 @@ phases:
 
   build:
     commands:
-      - pip3 install aws-sam-cli -qq
-      - sam --version 
+      #- pip3 install aws-sam-cli -qq
+      #- sam --version 
       - pip3 install awscli -qq
       - pip3 install pytest -qq
       - pip3 install pytest-cov -qq
