@@ -21,7 +21,7 @@ phases:
 
     # Executing SAM template
       - aws cloudformation package --template-file lambdas/samTemplate.yml --s3-bucket $S3_Bucket --output-template-file outputSamTemplate.yaml
-      - ls -l Lambdas/process-modem-data/lambda-code
+      - ls -l lambdas/process-modem-data/lambda-code
       - python3 -B -m pytest -v lambdas/Lambda1/Tests/ --cov=.
       - python3 -B -m pytest -v lambdas/Lambda2/Tests/ --cov=.
 
