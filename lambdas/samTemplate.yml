@@ -25,21 +25,25 @@ Resources:
           BASE_URL: !Ref CDFURL
           # CDF Contractor URL
 
+
+  CreateRTRADIOMsg:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      FunctionName: Create-RTRADIO-Msg
+      Handler: create-RTRADIO-msg.lambda_handler
+      Runtime: python3.8
+      CodeUri: ./create-RTRADIO-msg/lambda-code
+      Description: 'Create-RTRADIO-Msg'
+      MemorySize: 128
+      Timeout: 30
+      Environment:
+        Variables:
+          BASE_URL: !Ref CDFURL
+          # CDF Contractor URL
+
 # Not specifying role because the scope of permissions is not known as of now.
 # It is created automatically with a logical ID of <function-logical-id>Role with basic execution permissions.
 
-      #Role: 'arn:aws:iam::453698135753:role/service-role/InfraTest'
-      #Not specifying role since the code executes in multiple accounts
-      #It is created automatically with a logical ID of <function-logical-id>Role.
-      # Events:
-      #   getAZsAPI:
-      #     Type: Api
-      #     Properties:
-      #       Path: /getazs
-      #       Method: get
-      # Environment:
-      #   Variables:
-      #     REGION: ap-southeast-2
 
   Lambda1:
     Type: 'AWS::Serverless::Function'
@@ -51,18 +55,7 @@ Resources:
       Description: 'Lambda function 1'
       MemorySize: 128
       Timeout: 30
-      #Role: 'arn:aws:iam::453698135753:role/service-role/InfraTest'
-      #Not specifying role since the code executes in multiple accounts
-      #It is created automatically with a logical ID of <function-logical-id>Role.
-      # Events:
-      #   getAZsAPI:
-      #     Type: Api
-      #     Properties:
-      #       Path: /getazs
-      #       Method: get
-      # Environment:
-      #   Variables:
-      #     REGION: ap-southeast-2
+
 
   Lambda2:
     Type: 'AWS::Serverless::Function'
@@ -74,15 +67,3 @@ Resources:
       Description: 'Lambda function 2'
       MemorySize: 128
       Timeout: 30
-      #Role: 'arn:aws:iam::453698135753:role/service-role/InfraTest'
-      #Not specifying role since the code executes in multiple accounts
-      #It is created automatically with a logical ID of <function-logical-id>Role.
-      # Events:
-      #   getAZsAPI:
-      #     Type: Api
-      #     Properties:
-      #       Path: /getazs
-      #       Method: get
-      # Environment:
-      #   Variables:
-      #     REGION: ap-southeast-2
