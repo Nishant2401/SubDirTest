@@ -1,0 +1,2 @@
+### Requirements with Version Specifiers ###
+requests>=2.23.0
