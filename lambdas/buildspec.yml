@@ -18,8 +18,10 @@ phases:
       - pip3 install awscli -qq
       - pip3 install pytest -qq
       - pip3 install pytest-cov -qq
-      - pip3 install --target lambdas/process-modem-data/lambda-code requests
-      - pip3 install --target lambdas/create-RTRADIO-msg/lambda-code requests
+      - pip3 install --target lambdas/process-modem-data/lambda-code urllib3
+      - pip3 install --target lambdas/create-RTRADIO-msg/lambda-code urllib3
+      - ls -l lambdas/process-modem-data/lambda-code
+      - ls -l lambdas/create-RTRADIO-msg/lambda-code
 
     # Executing SAM template
       - aws cloudformation package --template-file lambdas/samTemplate.yml --s3-bucket $S3_Bucket --output-template-file outputSamTemplate.yaml
@@ -27,10 +29,6 @@ phases:
     # Placeholder for commands to launch pytest for future Lambdas - Lambda1 and Lambda2  
       - python3 -B -m pytest -v lambdas/Lambda1/Tests/ --cov=.
       - python3 -B -m pytest -v lambdas/Lambda2/Tests/ --cov=.
-
-    # Commands to verify stuff - doesnt go into develop  
-      - ls -l lambdas/process-modem-data/lambda-code
-      - ls -l lambdas/create-RTRADIO-msg/lambda-code
 
 artifacts:
   type: zip
