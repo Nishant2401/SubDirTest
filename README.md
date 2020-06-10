@@ -1,0 +1,3 @@
+# SubDirTest
+Test Repo
+https://codebuild.us-east-1.amazonaws.com/badges?uuid=eyJlbmNyeXB0ZWREYXRhIjoiVnBCZlZzOE93VUJEeEJpaEkwVXFSb0pIeStsZmFrdlpFekNROVRBejlkRXFaN3N1cU1hMVBucGJMTldTU2VmUXpuTnh3Z2s3Q08veC9YYWNZdUl2T3dBPSIsIml2UGFyYW1ldGVyU3BlYyI6InBMb0FnS1E0MkpSa1RFUVYiLCJtYXRlcmlhbFNldFNlcmlhbCI6MX0%3D&branch=master
