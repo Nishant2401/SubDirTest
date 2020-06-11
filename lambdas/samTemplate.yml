@@ -38,7 +38,7 @@ Resources:
       Timeout: 30
       Environment:
         Variables:
-          BASE_URL: !Ref CDFURL
+          BASE_URL: !Ref CDFURL1
           # CDF Contractor URL
 
 # Not specifying role because the scope of permissions is not known as of now.
