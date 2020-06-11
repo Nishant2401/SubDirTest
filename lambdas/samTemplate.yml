@@ -5,7 +5,7 @@ Description: Lambdas
 Parameters:
   CDFURL:
     Type: 'AWS::SSM::Parameter::Value<String>'
-    Default: "CDFURL1"
+    Default: "Default"
     Description: "CDF url for the lambda"
 
 
