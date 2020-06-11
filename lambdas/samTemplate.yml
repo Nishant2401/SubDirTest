@@ -4,8 +4,8 @@ Description: Lambdas
 
 Parameters:
   CDFURL:
-    Type: "String"
-    Default: "https://cbzvks1j2d.execute-api.us-west-2.amazonaws.com/Stage"
+    Type: 'AWS::SSM::Parameter::Value<String>'
+    #Default: "https://cbzvks1j2d.execute-api.us-west-2.amazonaws.com/Stage"
     Description: "CDF url for the lambda"
 
 
