@@ -3,7 +3,7 @@ Transform: 'AWS::Serverless-2016-10-31'
 Description: Lambdas
 
 Parameters:
-  CDFURL:
+  CDFURL1:
     Type: 'AWS::SSM::Parameter::Value<String>'
     Default: "https://cbzvks1j2d.execute-api.us-west-2.amazonaws.com/Stage"
     Description: "CDF url for the lambda"
@@ -22,7 +22,7 @@ Resources:
       Timeout: 30
       Environment:
         Variables:
-          BASE_URL: !Ref CDFURL
+          BASE_URL: !Ref CDFURL1
           # CDF Contractor URL
 
 
