@@ -3,7 +3,7 @@ Transform: 'AWS::Serverless-2016-10-31'
 Description: Lambdas
 
 Parameters:
-  CDFURL1:
+  CDFURL:
     Type: 'AWS::SSM::Parameter::Value<String>'
     Default: "CDFURL1"
     Description: "CDF url for the lambda"
@@ -22,7 +22,7 @@ Resources:
       Timeout: 30
       Environment:
         Variables:
-          BASE_URL: !Ref CDFURL1
+          BASE_URL: !Ref CDFURL
           # CDF Contractor URL
 
 
@@ -38,7 +38,7 @@ Resources:
       Timeout: 30
       Environment:
         Variables:
-          BASE_URL: !Ref CDFURL1
+          BASE_URL: !Ref CDFURL
           # CDF Contractor URL
 
 # Not specifying role because the scope of permissions is not known as of now.
