@@ -9,6 +9,11 @@ Parameters:
     Default: "CDFURL"
     Description: "CDF url for the lambda"
 
+  LambdaRole:
+    Type: 'AWS::SSM::Parameter::Value<String>'
+    Default: "LambdaRole"
+    Description: "ARN for the default Lambda Role"
+
 
 Resources:
   ProcessModemData:
@@ -18,10 +23,10 @@ Resources:
       Handler: process-modem-data.lambda_handler
       Runtime: python3.8
       CodeUri: ./process-modem-data/lambda-code
-      Description: 'Process-Modem-Data'
+      Description: 'Store required Modem MQTT data in CDF'
       MemorySize: 128
       Timeout: 30
-      Role: arn:aws:iam::453698135753:role/LambdaDeployment-BasicExecution
+      Role: !Ref LambdaRole
       Environment:
         Variables:
           CDF_URL: !Ref CDFURL
@@ -35,17 +40,14 @@ Resources:
       Handler: create-RTRADIO-msg.lambda_handler
       Runtime: python3.8
       CodeUri: ./create-RTRADIO-msg/lambda-code
-      Description: 'Create-RTRADIO-Msg'
+      Description: 'Get data from CDF and construct RTRADIO message'
       MemorySize: 128
       Timeout: 30
-      Role: arn:aws:iam::453698135753:role/LambdaDeployment-BasicExecution
+      Role: !Ref LambdaRole
       Environment:
         Variables:
           CDF_URL: !Ref CDFURL
           # CDF Contractor URL
-
-# Not specifying role because the scope of permissions is not known as of now.
-# It is created automatically with a logical ID of <function-logical-id>Role with basic execution permissions.
 
 
   Lambda1:
@@ -58,7 +60,7 @@ Resources:
       Description: 'Lambda function 1'
       MemorySize: 128
       Timeout: 30
-      Role: arn:aws:iam::453698135753:role/LambdaDeployment-BasicExecution
+      Role: !Ref LambdaRole
 
 
   Lambda2:
@@ -71,4 +73,4 @@ Resources:
       Description: 'Lambda function 2'
       MemorySize: 128
       Timeout: 30
-      Role: arn:aws:iam::453698135753:role/LambdaDeployment-BasicExecution
+      Role: !Ref LambdaRole
