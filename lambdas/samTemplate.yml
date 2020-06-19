@@ -2,6 +2,7 @@ AWSTemplateFormatVersion: '2010-09-09'
 Transform: 'AWS::Serverless-2016-10-31'
 Description: Lambdas
 
+
 Parameters:
   CDFURL:
     Type: 'AWS::SSM::Parameter::Value<String>'
@@ -20,9 +21,11 @@ Resources:
       Description: 'Process-Modem-Data'
       MemorySize: 128
       Timeout: 30
+      Policies:
+      - AWSLambdaBasicExecutionRole
       Environment:
         Variables:
-          BASE_URL: !Ref CDFURL
+          CDF_URL: !Ref CDFURL
           # CDF Contractor URL
 
 
@@ -36,9 +39,11 @@ Resources:
       Description: 'Create-RTRADIO-Msg'
       MemorySize: 128
       Timeout: 30
+      Policies:
+      - AWSLambdaBasicExecutionRole
       Environment:
         Variables:
-          BASE_URL: !Ref CDFURL
+          CDF_URL: !Ref CDFURL
           # CDF Contractor URL
 
 # Not specifying role because the scope of permissions is not known as of now.
