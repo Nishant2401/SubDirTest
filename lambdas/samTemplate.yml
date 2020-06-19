@@ -21,8 +21,7 @@ Resources:
       Description: 'Process-Modem-Data'
       MemorySize: 128
       Timeout: 30
-      Policies:
-      - AWSLambdaBasicExecutionRole
+      Role: arn:aws:iam::453698135753:role/LambdaDeployment-BasicExecution
       Environment:
         Variables:
           CDF_URL: !Ref CDFURL
@@ -39,8 +38,7 @@ Resources:
       Description: 'Create-RTRADIO-Msg'
       MemorySize: 128
       Timeout: 30
-      Policies:
-      - AWSLambdaBasicExecutionRole
+      Role: arn:aws:iam::453698135753:role/LambdaDeployment-BasicExecution
       Environment:
         Variables:
           CDF_URL: !Ref CDFURL
@@ -60,6 +58,7 @@ Resources:
       Description: 'Lambda function 1'
       MemorySize: 128
       Timeout: 30
+      Role: arn:aws:iam::453698135753:role/LambdaDeployment-BasicExecution
 
 
   Lambda2:
@@ -72,3 +71,4 @@ Resources:
       Description: 'Lambda function 2'
       MemorySize: 128
       Timeout: 30
+      Role: arn:aws:iam::453698135753:role/LambdaDeployment-BasicExecution
