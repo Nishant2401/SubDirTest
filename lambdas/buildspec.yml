@@ -18,10 +18,14 @@ phases:
       - pip3 install awscli -qq
       - pip3 install pytest -qq
       - pip3 install pytest-cov -qq
-      - pip3 install --target lambdas/process-modem-data/lambda-code urllib3
-      - pip3 install --target lambdas/create-RTRADIO-msg/lambda-code urllib3
+      # - pip3 install --target lambdas/process-modem-data/lambda-code urllib3
+      # - pip3 install --target lambdas/create-RTRADIO-msg/lambda-code urllib3
       - ls -l lambdas/process-modem-data/lambda-code
       - ls -l lambdas/create-RTRADIO-msg/lambda-code
+      - ls -l
+      - pwd
+      - ls -l Server
+
 
     # Executing SAM template
       - aws cloudformation package --template-file lambdas/samTemplate.yml --s3-bucket $S3_Bucket --output-template-file outputSamTemplate.yaml
