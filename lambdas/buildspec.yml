@@ -20,11 +20,12 @@ phases:
       - pip3 install pytest-cov -qq
       # - pip3 install --target lambdas/process-modem-data/lambda-code urllib3
       # - pip3 install --target lambdas/create-RTRADIO-msg/lambda-code urllib3
-      - ls -l lambdas/process-modem-data/lambda-code
-      - ls -l lambdas/create-RTRADIO-msg/lambda-code
+      # - ls -l lambdas/process-modem-data/lambda-code
+      # - ls -l lambdas/create-RTRADIO-msg/lambda-code
       - ls -l
       - pwd
-      - ls -l Server
+      - cp Server/file2 lambdas/Lambda1/LambdaCode/
+      - ls -l lambdas/Lambda1/LambdaCode/
 
 
     # Executing SAM template
