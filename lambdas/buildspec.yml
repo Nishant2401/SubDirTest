@@ -24,7 +24,7 @@ phases:
       # - ls -l lambdas/create-RTRADIO-msg/lambda-code
       - ls -l
       - pwd
-      - for file in file1; do cp Server/{$file} lambdas/Lambda1/LambdaCode/; done
+      - for file in file2; do cp Server/$file lambdas/Lambda1/LambdaCode/; done
       - ls -l lambdas/Lambda1/LambdaCode/
 
 
