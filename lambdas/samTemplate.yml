@@ -15,7 +15,7 @@ Parameters:
     Description: "ARN for the default Lambda Role"
 
 
-# Resources:
+Resources:
 #   ProcessModemData:
 #     Type: 'AWS::Serverless::Function'
 #     Properties:
