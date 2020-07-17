@@ -15,40 +15,51 @@ Parameters:
     Description: "ARN for the default Lambda Role"
 
 
-Resources:
-  ProcessModemData:
-    Type: 'AWS::Serverless::Function'
-    Properties:
-      FunctionName: Process-Modem-Data
-      Handler: process-modem-data.lambda_handler
-      Runtime: python3.8
-      CodeUri: ./process-modem-data/lambda-code
-      Description: 'Store required Modem MQTT data in CDF'
-      MemorySize: 128
-      Timeout: 30
-      Role: !Ref LambdaRole
-      Environment:
-        Variables:
-          CDF_URL: !Ref CDFURL
-          # CDF Contractor URL
+# Resources:
+#   ProcessModemData:
+#     Type: 'AWS::Serverless::Function'
+#     Properties:
+#       FunctionName: Process-Modem-Data
+#       Handler: process-modem-data.lambda_handler
+#       Runtime: python3.8
+#       CodeUri: ./process-modem-data/lambda-code
+#       Description: 'Store required Modem MQTT data in CDF'
+#       MemorySize: 128
+#       Timeout: 30
+#       Role: !Ref LambdaRole
+#       Environment:
+#         Variables:
+#           CDF_URL: !Ref CDFURL
+#           # CDF Contractor URL
 
 
-  CreateRTRADIOMsg:
-    Type: 'AWS::Serverless::Function'
-    Properties:
-      FunctionName: Create-RTRADIO-Msg
-      Handler: create-RTRADIO-msg.lambda_handler
-      Runtime: python3.8
-      CodeUri: ./create-RTRADIO-msg/lambda-code
-      Description: 'Get data from CDF and construct RTRADIO message'
-      MemorySize: 128
-      Timeout: 30
-      Role: !Ref LambdaRole
-      Environment:
-        Variables:
-          CDF_URL: !Ref CDFURL
-          # CDF Contractor URL
+  # CreateRTRADIOMsg:
+  #   Type: 'AWS::Serverless::Function'
+  #   Properties:
+  #     FunctionName: Create-RTRADIO-Msg
+  #     Handler: create-RTRADIO-msg.lambda_handler
+  #     Runtime: python3.8
+  #     CodeUri: ./create-RTRADIO-msg/lambda-code
+  #     Description: 'Get data from CDF and construct RTRADIO message'
+  #     MemorySize: 128
+  #     Timeout: 30
+  #     Role: !Ref LambdaRole
+  #     Environment:
+  #       Variables:
+  #         CDF_URL: !Ref CDFURL
+  #         # CDF Contractor URL
 
+  # CreateJSON:
+  #   Type: 'AWS::Serverless::Function'
+  #   Properties:
+  #     FunctionName: Create-JSON
+  #     Handler: create-json.lambda_handler
+  #     Runtime: python3.8
+  #     CodeUri: ./create-json/lambda-code
+  #     Description: 'Create json from raw data'
+  #     MemorySize: 128
+  #     Timeout: 30
+  #     Role: !Ref LambdaRole
 
   Lambda1:
     Type: 'AWS::Serverless::Function'
