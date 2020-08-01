@@ -24,16 +24,13 @@ phases:
       # - ls -l lambdas/create-RTRADIO-msg/lambda-code
       - ls -l
       - pwd
-      - for file in file2; do cp Server/$file lambdas/Lambda1/LambdaCode/; done
-      - ls -l lambdas/Lambda1/LambdaCode/
-
 
     # Executing SAM template
       - aws cloudformation package --template-file lambdas/samTemplate.yml --s3-bucket $S3_Bucket --output-template-file outputSamTemplate.yaml
       
     # Placeholder for commands to launch pytest for future Lambdas - Lambda1 and Lambda2  
-      - python3 -B -m pytest -v lambdas/Lambda1/Tests/test_handler.py --cov=.
-      - python3 -B -m pytest -v lambdas/Lambda2/Tests/ --cov=.
+      - python3 -B -m pytest -v lambdas/PipelineTestLambda1/Tests/test_handler.py --cov=.
+      - python3 -B -m pytest -v lambdas/PipelineTestLambda2/Tests/ --cov=.
 
 artifacts:
   type: zip
