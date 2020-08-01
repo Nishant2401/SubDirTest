@@ -85,3 +85,56 @@ Resources:
       MemorySize: 128
       Timeout: 30
       Role: !Ref LambdaRole
+
+  # Step Functions
+  consumeCsvDeleteCdfnishanttest:
+    Type: AWS::Serverless::StateMachine
+    Properties:
+      Name: consume-csv-delete-cdf-nishanttest
+      Type: STANDARD
+      Role: !Ref LambdaRole
+      Definition:
+        {
+          "Comment": "State machine deletes CDF entities and certs from csv file loaded to S3",
+          "StartAt": "setup",
+          "States": {
+             "setup": {
+              "Comment": "Set up initial values for state machine",
+              "Type": "Pass",
+              "Next": "consume-csv"
+            },
+            "consume-csv": {
+              "Type": "Task",
+              "Resource": "arn:aws:lambda:us-east-1:933020280538:function:Consume-CSV-For-Delete-CDF",
+              "ResultPath":"$.taskResult-bottoms-up-consume-csv",
+              "Next": "delete-cdf-entity-and-cert"
+            },
+            "delete-cdf-entity-and-cert": {
+              "Type": "Task",
+              "Resource": "arn:aws:lambda:us-east-1:933020280538:function:Delete-CDF",
+              "ResultPath": "$.taskResult-delete-cdf-entity-and-cert",
+              "Next": "check-entity-delete"
+            },
+            "check-entity-delete": {
+              "Type": "Choice",
+              "InputPath": "$",
+              "Choices": [
+                {
+                  "Variable": "$.taskResult-delete-cdf-entity-and-cert",
+                  "BooleanEquals": true,
+                  "Next": "done"
+                },
+                {
+                  "Variable": "$.taskResult-delete-cdf-entity-and-cert",
+                  "BooleanEquals": false,
+                  "Next": "fail"
+                }]
+            },
+            "done": {
+              "Type": "Succeed"
+            },
+            "fail": {
+              "Type": "Fail"
+            }
+          }
+        }
