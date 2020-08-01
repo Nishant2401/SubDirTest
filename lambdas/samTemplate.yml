@@ -92,7 +92,8 @@ Resources:
     Properties:
       Name: consume-csv-delete-cdf-nishanttest
       Type: STANDARD
-      Role: !Ref LambdaRole
+      Role: arn:aws:iam::083011521439:role/service-role/nonexistantrole
+      #Role: !Ref LambdaRole
       Definition:
         {
           "Comment": "State machine deletes CDF entities and certs from csv file loaded to S3",
