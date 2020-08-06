@@ -23,8 +23,9 @@ phases:
       # - ls -l lambdas/process-modem-data/lambda-code
       # - ls -l lambdas/create-RTRADIO-msg/lambda-code
       - pip3 install --target ../CEI/lambdas/cei-configuration/lambda-code urllib3
+      - ls -l ../CEI/lambdas/cei-configuration/lambda-code
       - pip3 install --target ../CEI/lambdas/cei-configuration/lambda-code requests
-      - ls -l
+      - ls -l ../CEI/lambdas/cei-configuration/lambda-code
       - pwd
 
     # Executing SAM template
