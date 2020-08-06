@@ -1,0 +1,348 @@
+openapi: 3.0.1
+info:
+  title: GTT CAD EVP Interface (CEI)
+  description: 'This is the GTT CAD EVP Interface - an API designed to facilitate
+    messages produced from a CommSys orchestrated CAD system to control and enable
+    Opticom based preemption operations for Law Enforcement and similar CAD managed
+    Agencies. '
+  termsOfService: https://www.gtt.com/terms-of-use/
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.1
+servers:
+- url: /v1
+tags:
+- name: incident
+  description: Preemption Message - The CAD shall send the following incident and status information when a vehicle is dispatched to an incident. 
+- name: configuration
+  description: Configuration data - The CAD shall send the following administrative information describing the configuration and setup of the CAD interface. 
+paths:
+  /cad/incidents:
+    post:
+      tags:
+      - incident
+      summary: Post a new preemption message to the GTT CEI.
+      description: This is the primay message provided by the CAD system for determining
+        EVP eligibility for a given vehicle. It contains both incident and unit status
+        information for processing and logging.
+      operationId: incidents
+      requestBody:
+        description: incident/vehicle status data
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/incidentDetails'
+        required: true
+      responses:
+        202:
+          description: Accepted
+          content: 
+            application/json:
+              schema:
+                $ref: "#/components/schemas/incidentAccepted"
+        400:
+          description: Bad Request
+          content: 
+            application/json:
+              schema:
+                $ref: "#/components/schemas/malformedRequest"
+        500: 
+          description: Internal Error
+          content: 
+            application/json:
+              schema:
+                $ref: "#/components/schemas/internalError"
+      security:
+      - agency_api_key: []
+      x-codegen-request-body-name: body
+  /cad/configuration:
+    post:
+      tags:
+      - configuration
+      summary: Post an agency configuration message to the CEI.
+      description: This is the base configuration message provided by the CAD, designed
+        to populate the known and expected fields the CAD will be providing for the
+        GTT message. This is intended for change tracking and notification against
+        unrecognized results.
+      operationId: configuration
+      requestBody:
+        description: CEI Agency Configuration Data data
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/configuration'
+        required: true
+      responses:
+        200:
+          description: OK
+          content: 
+            application/json:
+              schema:
+                $ref: "#/components/schemas/configurationUpdated"
+        400:
+          description: Bad Request
+          content: 
+            application/json:
+              schema:
+                $ref: "#/components/schemas/malformedRequest"
+        500: 
+          description: Internal Error
+          content: 
+            application/json:
+              schema:
+                $ref: "#/components/schemas/internalError"
+      security:
+      - agency_api_key: []
+      x-codegen-request-body-name: body
+components:
+  schemas:
+    incidents:
+      required:
+      - id
+      type: object
+      properties:
+        id:
+          type: string
+          format: Guid
+          description: "Unique identifier for this incident"
+        action:
+          type: string
+          description: "Indicates the action that occurred that caused the incident to be sent. Possibly values are: CREATE, UPDATE, CLOSE"
+        actionDateTime:
+          type: string
+          format: UTCDateTime
+          description: "The date and time the incident was created/updated/closed.  Include year, month, day, hours, minutes, seconds, time zone"
+        status:
+          type: string
+          description: "Current status of the incident.  Possible values are: PENDING, ACTIVE, CLOSED"
+        statusDateTime:
+          type: string
+          format: UTCDateTime
+          description: "The date and time of the incident’s status.  Include year, month, day, hours, minutes, seconds, time zone"
+        type:
+          type: string
+          description: "Indicates the current type of the incident"
+        priority:
+          type: string
+          description: "Indicates the assigned priority level of the incident"
+        location:
+          type: object
+          description: "Indicates the location of the incident"
+          properties:
+            name:
+              type: string
+              description: "Description of the incident location"
+            address:
+              type: object
+              description: "Address of the incident"
+              properties:
+                crossStreet:
+                  type: string
+                  description: "Intersecting road relevant to the location"
+                street1:
+                  type: string
+                  description: "Street Address pt 1"
+                street2:
+                  type: string
+                  description: "Street Address pt 2"
+                city:
+                  type: string
+                  description: "City of the incident"
+                State:
+                  type: string
+                  description: "State of the incident"
+                County:
+                  type: string
+                  description: "County of the incident"
+                Zip:
+                  type: string
+                  description: "Zip code of the incident"
+                  format: '##### or #####-####'
+                Directions:
+                  type: string
+                  description: "Directions to the location of the incident"
+            geometry:
+              type: object
+              description: "Latitude and longitude of incident"
+              properties:
+                type:
+                  type: string
+                  enum:
+                  - Point
+                  description: "Fixed value - Point"
+                coordinates:
+                  type: array
+                  description: "Coordinates expressed in degrees decimal (GeoJSON)"
+                  items:
+                    type: number
+                    format: float
+        units:
+          type: array
+          description: "Units assigned to /involved with the incident"
+          items:
+            $ref: '#/components/schemas/unit'
+    unit:
+      required:
+      - deviceId
+      type: object
+      description: "Unit associated with an incident"
+      properties:
+        deviceId:
+          type: string
+          format: Guid
+          description: "CAD Value used to associate the incoming message to a GTT based device/modem"
+        unitId:
+          type: string
+          description: "Indicates the unit ID assigned to respond to the incident"
+        dispatchDateTime:
+          type: string
+          format: UTCDateTime
+          description: "The date and time the unit was was dispatched - include year, month, day, hours, minutes, seconds, time zone"
+        type:
+          type: string
+          description: "Type of unit - ie PATROL"
+        status:
+          type: string
+          description: "Indicates the current status of the unit"
+        statusDateTime:
+          type: string
+          description: "The date and time of the unit’s status - include year, month, day, hours, minutes, seconds, time zone"
+        location:
+          type: object
+          description: "Current known location of vehicle"
+          properties:
+            updateDateTime:
+              type: string
+              format: UTCDateTime
+              description: "The date and time of the unit’s location - include year, month, day, hours, minutes, seconds, time zone"
+            geometry:
+              type: object
+              description: "Latitude and longitude of unit"
+              properties:
+                type:
+                  type: string
+                  enum:
+                  - Point
+                  description: "Fixed value - Point"
+                coordinates:
+                  type: array
+                  description: "Coordinates expressed in degrees decimal (GeoJSON)"
+                  items:
+                    type: number
+                    format: float
+    incidentDetails:
+      description: "Details of CAD reported incident"
+      required:
+      - messageId
+      type: object
+      properties:
+        messageId:
+          type: string
+          format: Guid
+          description: "Unique identifier for this message"
+        siteId:
+          type: string
+          format: Guid
+          description: "Unique identifier for this installation (region)"
+        agencyId:
+          type: string
+          format: Guid
+          description: "Unique identifier for this agency"
+        incidents:
+          type: array
+          items:
+            $ref: '#/components/schemas/incidents'
+          description: "Incidents within this preemptionaction"
+    configuration:
+      type: object
+      description: "Configuration parameters for the given agency"
+      properties:
+        messageId:
+          type: string
+          format: Guid
+          description: "Unique identifier for this message"
+        siteId:
+          type: string
+          format: Guid
+          description: "Unique identifier for this installation (region)"
+        agencyId:
+          type: string
+          format: Guid
+          description: "Unique identifier for this agency"          
+        unitTypeConfig:
+          type: array
+          items:
+            type: string
+          description: "Indicates the valid unit types provided by the CAD"
+        unitIDConfig:
+          type: array
+          items:
+            type: string
+          description: "Indicates the valid unit IDs setup in the CAD"
+        incidentTypeConfig:
+          type: array
+          items:
+            type: string
+          description: "Indicates the valid incident types provided by the CAD"
+        incidentStatusConfig:
+          type: array
+          items:
+            type: string
+          description: "Indicates the valid incident status values provided by the CAD"
+        incidentPriorityConfig:
+          type: array
+          items:
+            type: string
+          description: "Indicates the valid incident priority values provided by the CAD"
+        unitStatusConfig:
+          type: array
+          items:
+            type: string
+          description: "Indidates the valiid Unit Status values provided by the CAD"
+    incidentAccepted:
+      type: object
+      description: "Returns when posted incident is successfully queued for processing (response 202)"
+      properties:
+        statusCode:
+          type: number
+          description: "202"
+        body:
+          type: string
+          format: "Incident [incidentId] for [siteId]:[agencyId] queued for processing"
+    configurationUpdated:
+      type: object
+      description: "Returns when the posed configuration successfully updated for the targeted agency (response 200)"
+      properties:
+        statusCode:
+          type: number
+          description: "200"
+        body:
+          type: string
+          format: "Incident [incidentId] for [siteId]:[agencyId] queued for processing"
+    malformedRequest:
+      type: object
+      description: "Returns when posted incident isn't properly formatted for processing (response 400)"
+      properties:
+        statusCode:
+          type: number
+          description: "400"
+        body:
+          type: string
+          format: "Message Format Error - [KeyValue broken/missing]"
+    internalError:
+      type: object
+      description: "Returns when posted call fails due to an internal exception (response 500)"
+      properties:
+        statusCode:
+          type: number
+          description: "500"
+        body:
+          type: string
+          format: "[Error Type] Error - [Error Text]"
+  securitySchemes:
+    agency_api_key:
+      type: apiKey
+      name: x-api-key
+      in: header
+      description: "Access key - distributed on per-agency basis"

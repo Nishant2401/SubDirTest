@@ -1,0 +1,546 @@
+{
+	"info": {
+		"_postman_id": "d772d8e0-d81a-44d1-8036-bd8bacc913b2",
+		"name": "CEI CDF Templates",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Templates",
+			"item": [
+				{
+					"name": "CEI VEHICLE TEMPLATE",
+					"item": [
+						{
+							"name": "Create",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"type": "text",
+										"value": "'Accept: application/vnd.aws-cdf-v2.0+json'"
+									},
+									{
+										"key": "Content-Type",
+										"type": "text",
+										"value": "'Content-Type: application/vnd.aws-cdf-v2.0+json'"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"properties\": {\r\n\t\"gttSerial\": { \"type\": \"string\"},\r\n    \"addressMAC\": { \"type\": [\"null\", \"string\"]},\r\n    \"addressLAN\": {\r\n        \"type\": \"string\",\r\n        \"format\": \"ipv4\"\r\n    },\r\n    \"addressWAN\": {\r\n        \"type\": \"string\",\r\n        \"format\": \"ipv4\"\r\n    },\r\n    \"IMEI\": { \"type\": \"string\"},\r\n    \"devCertId\": { \"type\": [\"null\", \"string\"]},\r\n    \"make\": { \"type\": [\"null\", \"string\"]},\r\n    \"model\": {\"type\": [\"null\", \"string\"]},\r\n    \"priority\": {\r\n\t\t    \"type\": \"string\",\r\n        \"enum\": [\"High\", \"Low\"]\r\n    },\r\n    \"class\": { \"type\": [\"null\", \"string\"]},\r\n    \"VID\": { \"type\": [\"null\", \"string\"]},\r\n    \"auxiliaryIo\": { \"type\": [\"null\", \"string\"]},\r\n    \"lat\": { \"type\": [ \"null\", \"string\"]},\r\n    \"long\": { \"type\": [\"null\", \"string\"]},\r\n    \"heading\": { \"type\": [\"null\", \"string\"]},\r\n    \"speed\": { \"type\": [\"null\", \"string\"]},\r\n    \"fixStatus\": { \"type\": [\"null\", \"string\"]},\r\n    \"numFixSat\": { \"type\": [\"null\", \"string\"]},\r\n    \"lastGPSMsgTimestamp\": { \"type\": [\"null\", \"string\"]},\r\n    \"lastGPIOMsgTimestamp\": { \"type\": [\"null\", \"string\"]},\r\n    \"CEIDeviceID\":{ \"type\": \"string\"},\r\n    \"CEIIncidentStatus\":{\"type\":[\"null\",\"string\"]},\r\n    \"CEIIncidentAction\":{\"type\":[\"null\",\"string\"]},\r\n    \"CEIIncidentStatusDateandTime\":{\"type\":[\"null\",\"string\"]},\r\n    \"CEIIncidentTypeCode\":{\"type\":[\"null\",\"string\"]},\r\n    \"CEIIncidentPriority\":{\"type\":[\"null\",\"string\"]},\r\n    \"CEIIncidentActionDateandTime\":{ \"type\":[\"null\", \"string\"]},\r\n    \"CEIIncidentLocationName\":{ \"type\":[\"null\", \"string\"]},\r\n    \"CEIIncidentLocationCrossStreet\":{ \"type\":[\"null\", \"string\"]},\r\n    \"CEIIncidentLocationStreet1\":{ \"type\":[\"null\", \"string\"]},\r\n    \"CEIIncidentLocationStreet2\":{ \"type\":[\"null\", \"string\"]},\r\n    \"CEIIncidentLocationCity\":{ \"type\":[\"null\", \"string\"]},\r\n    \"CEIIncidentLocationState\":{ \"type\":[\"null\", \"string\"]},\r\n    \"CEIIncidentLocationCounty\":{ \"type\":[\"null\", \"string\"]},\r\n    \"CEIIncidentLocationZip\":{ \"type\":[\"null\", \"string\"]},\r\n    \"CEIIncidentLocationDirections\":{ \"type\":[\"null\", \"string\"]},\r\n    \"CEIIncidentLocationCoordinates\":{ \"type\":[\"null\", \"string\"]},\r\n    \"CEIUnitID\":{ \"type\": [\"null\",\"string\"]},\r\n    \"CEIDispatchDateandTime\":{ \"type\":[\"null\", \"string\"]},\r\n    \"CEIUnitTypeID\":{ \"type\":[\"null\", \"string\"]},\r\n    \"CEIUnitStatus\":{ \"type\":[\"null\", \"string\"]},\r\n    \"CEIUnitStatusDateandTime\":{ \"type\":[\"null\", \"string\"]},\r\n    \"CEIUnitLocationLatitudeandLongitude\":{ \"type\":[\"null\", \"string\"]},\r\n    \"CEIUnitLocationDateandTime\":{\"type\":[\"null\", \"string\"]},\r\n    \"CEIVehicleActive\":{\"type\": \"boolean\"},\r\n    \"CEILastReferenced\":{\"type\": [\"null\", \"string\"]}\r\n  },\r\n  \"required\": [\"devCertId\"]  \r\n}"
+								},
+								"url": {
+									"raw": "{{url}}/{{env}}/templates/device/{{ceivehicle}}",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"{{env}}",
+										"templates",
+										"device",
+										"{{ceivehicle}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Publish",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Accept",
+										"type": "text",
+										"value": "'Accept: application/vnd.aws-cdf-v2.0+json'"
+									},
+									{
+										"key": "Content-Type",
+										"type": "text",
+										"value": "'Content-Type: application/vnd.aws-cdf-v2.0+json'"
+									}
+								],
+								"url": {
+									"raw": "{{url}}/{{env}}/templates/device/{{ceivehicle}}/publish",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"{{env}}",
+										"templates",
+										"device",
+										"{{ceivehicle}}",
+										"publish"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "'Accept: application/vnd.aws-cdf-v2.0+json'",
+										"type": "text"
+									},
+									{
+										"key": "Content-type",
+										"value": "'Content-Type: application/vnd.aws-cdf-v2.0+json'",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{url}}/{{env}}/templates/group/{{ceivehicle}}",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"{{env}}",
+										"templates",
+										"group",
+										"{{ceivehicle}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "List instances",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"type": "text",
+										"value": "'Accept: application/vnd.aws-cdf-v2.0+json'"
+									},
+									{
+										"key": "Content-Ty",
+										"type": "text",
+										"value": "'Content-Type: application/vnd.aws-cdf-v2.0+json'"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/{{env}}/search?type={{g1-temp}}",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"{{env}}",
+										"search"
+									],
+									"query": [
+										{
+											"key": "type",
+											"value": "{{g1-temp}}"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "ea6de094-6055-4694-9345-951cd050c342",
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "595340eb-b439-48c4-8df5-ab16d5f50898",
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "CEI AGENCY TEMPLATE",
+					"item": [
+						{
+							"name": "Create ",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "'Accept: application/vnd.aws-cdf-v2.0+json'",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "'Content-Type: application/vnd.aws-cdf-v2.0+json'",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"properties\": {\r\n    \"city\": { \"type\": \"string\"},\r\n    \"state\": { \"type\": \"string\"},\r\n    \"timezone\": {\r\n        \"type\": \"string\",\r\n        \"enum\": [\"Central\", \"Mountain\", \"Eastern\", \"Pacific\", \"Arizona\"]\r\n    },\r\n    \"agencyCode\": {\r\n        \"type\": \"integer\",\r\n        \"minimum\": 1,\r\n        \"maximum\": 255\r\n    },\r\n    \"agencyGUID\": { \"type\": [\"null\", \"string\"]},\r\n    \"agencyID\": { \"type\": [\"null\", \"string\"]},\r\n    \"caCertId\": { \"type\": [\"null\", \"string\"]},\r\n    \"priority\": {\r\n        \"type\": \"string\",\r\n        \"enum\": [\"High\", \"Low\"]\r\n    },\r\n    \"CEISiteIDGuid\" : { \"type\" : \"string\"},\r\n\t\"CEIAgencyName\" : { \"type\" : \"string\"},\r\n\t\"CEIEVPConditional\" : { \"type\" : \"string\"},\r\n    \"CEIEVPTimeoutSecs\" : {\r\n       \"type\" : \"integer\",\r\n       \"minimum\": 300,\r\n       \"maximum\": 1800\r\n       },\r\n    \"CEIUnitTypeConfig\" : { \"type\": [\"null\", \"string\"]},\r\n    \"CEIUnitIDConfig\" : { \"type\": [\"null\", \"string\"]},\r\n    \"CEIIncidentTypeConfig\" : { \"type\": [\"null\", \"string\"]},\r\n    \"CEIIncidentStatusConfig\" : { \"type\": [\"null\", \"string\"]},\r\n    \"CEIIncidentPriorityConfig\" : { \"type\": [\"null\", \"string\"]},\r\n    \"CEIUnitStatusConfig\" : { \"type\": [\"null\", \"string\"]}\r\n  },  \r\n  \"relations\": {\r\n\t  \"in\": {\r\n      \"ownedby\": [\r\n        \"ceivehicle\",\r\n        \"phaseselector\"\r\n      ]   \r\n    }   \r\n  },\r\n  \"required\": [\"city\", \"state\", \"timezone\", \"agencyCode\", \"agencyGUID\", \"priority\", \"caCertId\"]\r\n}"
+								},
+								"url": {
+									"raw": "{{url}}/{{env}}/templates/group/{{ceiagency}}",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"{{env}}",
+										"templates",
+										"group",
+										"{{ceiagency}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Publish ",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "'Accept: application/vnd.aws-cdf-v2.0+json'",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "'Content-Type: application/vnd.aws-cdf-v2.0+json'",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{url}}/{{env}}/templates/group/{{ceiagency}}/publish",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"{{env}}",
+										"templates",
+										"group",
+										"{{ceiagency}}",
+										"publish"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete ",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "'Accept: application/vnd.aws-cdf-v2.0+json'",
+										"type": "text"
+									},
+									{
+										"key": "Content-type",
+										"value": "'Content-Type: application/vnd.aws-cdf-v2.0+json'",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{url}}/{{env}}/templates/group/{{ceiagency}}",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"{{env}}",
+										"templates",
+										"group",
+										"{{ceiagency}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "List instances",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"type": "text",
+										"value": "'Accept: application/vnd.aws-cdf-v2.0+json'"
+									},
+									{
+										"key": "Content-Ty",
+										"type": "text",
+										"value": "'Content-Type: application/vnd.aws-cdf-v2.0+json'"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/{{env}}/search?type={{ceiagency}}",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"{{env}}",
+										"search"
+									],
+									"query": [
+										{
+											"key": "type",
+											"value": "{{ceiagency}}"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "66c89eab-6fc2-4b3c-8492-03748fe5ad94",
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "f06b4406-bf55-45f2-99d4-bba365589af6",
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "List all group templates",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "'Accept: application/vnd.aws-cdf-v2.0+json'",
+								"type": "text"
+							},
+							{
+								"key": "Content-Ty",
+								"value": "'Content-Type: application/vnd.aws-cdf-v2.0+json'",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{url}}/{{env}}/templates/group?status=published",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{env}}",
+								"templates",
+								"group"
+							],
+							"query": [
+								{
+									"key": "status",
+									"value": "published"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List all device templates",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "'Accept: application/vnd.aws-cdf-v2.0+json'",
+								"type": "text"
+							},
+							{
+								"key": "Content-Ty",
+								"value": "'Content-Type: application/vnd.aws-cdf-v2.0+json'",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{url}}/{{env}}/templates/device?status=published",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{env}}",
+								"templates",
+								"device"
+							],
+							"query": [
+								{
+									"key": "status",
+									"value": "published"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "aed16eab-6a3c-4ed8-aeac-dd0143ef28b3",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "897dec92-06a5-4ab0-9de1-efde68563274",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			],
+			"protocolProfileBehavior": {}
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "2f9d3258-eacd-40d8-a22b-f83f69002f4d",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "7c590d7e-9f98-4469-9e22-33c92d330461",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"id": "932a2021-5975-4c2e-a3df-07800bf2a15e",
+			"key": "url",
+			"value": "https://cbzvks1j2d.execute-api.us-west-2.amazonaws.com",
+			"type": "string"
+		},
+		{
+			"id": "bb75760a-a929-42eb-9c84-24f60056350f",
+			"key": "env",
+			"value": "Stage",
+			"type": "string"
+		},
+		{
+			"id": "c3afa283-7e9f-408d-b7dd-7edf9cf95579",
+			"key": "g1-temp",
+			"value": "region",
+			"type": "string"
+		},
+		{
+			"id": "cf309bcf-098d-46e9-b12f-a81c2525c804",
+			"key": "relation",
+			"value": "owns",
+			"type": "string"
+		},
+		{
+			"id": "9ace8dea-6db8-4f17-ae89-d0db09458a56",
+			"key": "ceiagency",
+			"value": "ceiagency",
+			"type": "string"
+		},
+		{
+			"id": "679cbee2-a8e9-45a4-b470-bcb37c3ca2b8",
+			"key": "ceiagencyname",
+			"value": "CopsburgPolice",
+			"type": "string"
+		},
+		{
+			"id": "28c19166-7010-4958-97aa-401b0dbba440",
+			"key": "ceivehiclename",
+			"value": "Car11",
+			"type": "string"
+		},
+		{
+			"id": "5a358095-4d97-4d9f-93c3-eca80f9669f6",
+			"key": "g1.5-temp",
+			"value": "ceiregion",
+			"type": "string"
+		},
+		{
+			"id": "9b7580fe-9b20-428d-af98-383548d62f07",
+			"key": "ceivehicle",
+			"value": "ceivehicle",
+			"type": "string"
+		},
+		{
+			"id": "96a3efc0-59e4-45bc-a8d1-6207ebd75293",
+			"key": "ceiregionname",
+			"value": "Copsburg",
+			"type": "string"
+		}
+	],
+	"protocolProfileBehavior": {}
+}
