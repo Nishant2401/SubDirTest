@@ -26,7 +26,7 @@ phases:
       - ls -l ../CEI/lambdas/cei-configuration/lambda-code
       - pip3 install --target ../CEI/lambdas/cei-configuration/lambda-code requests
       - ls -l ../CEI/lambdas/cei-configuration/lambda-code
-      - pwd
+      - ls -l ../lambdas/PipelineTestLambda1/LambdaCode
 
     # Executing SAM template
       - aws cloudformation package --template-file lambdas/samTemplate.yml --s3-bucket $S3_Bucket --output-template-file outputSamTemplate.yaml
