@@ -22,6 +22,8 @@ phases:
       # - pip3 install --target lambdas/create-RTRADIO-msg/lambda-code urllib3
       # - ls -l lambdas/process-modem-data/lambda-code
       # - ls -l lambdas/create-RTRADIO-msg/lambda-code
+      - pip3 install --target ../CEI/lambdas/cei-configuration/lambda-code urllib3
+      - pip3 install --target ../CEI/lambdas/cei-configuration/lambda-code requests
       - ls -l
       - pwd
 
