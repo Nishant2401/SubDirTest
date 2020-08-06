@@ -92,7 +92,7 @@ Resources:
     Type: 'AWS::Serverless::Function'
     Properties:
       FunctionName: CEI-Configuration
-      Handler: cei-configuration.lambda_handler
+      Handler: CEI_Configuration/CEI_Configuration.configurationHandler
       Runtime: python3.8
       CodeUri: ../CEI/lambdas/cei-configuration/lambda-code
       Description: 'Handles the update mechanism for the CEI CDF Agency Configuration call'
