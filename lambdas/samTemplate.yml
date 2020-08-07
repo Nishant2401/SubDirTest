@@ -74,7 +74,7 @@ Resources:
       Role: !Ref LambdaRole
 
 
-  PipelineTest-Lambda2:
+  PipelineTestLambda2:
     Type: 'AWS::Serverless::Function'
     Properties:
       FunctionName: PipelineTestLambda2
@@ -88,7 +88,7 @@ Resources:
 
 
   # Police (CEI) Lambdas
-  PipelineTest-CEIConfiguration:
+  PipelineTestCEIConfiguration:
     Type: 'AWS::Serverless::Function'
     Properties:
       FunctionName: PipelineTest-CEI-Configuration
