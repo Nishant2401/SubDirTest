@@ -8,6 +8,8 @@ phases:
     commands:
     # Updating packages on container, and checking home path and python version for logging purposes.
       - pip --version
+      - apt-get remove python3-pip
+      - pip --version
       - pip3 --version
       - apt-get -qq update
       - pip install --upgrade pip
