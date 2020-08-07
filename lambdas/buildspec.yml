@@ -29,9 +29,9 @@ phases:
       # - ls -l lambdas/create-RTRADIO-msg/lambda-code
       - pwd
       - ls -l
-      - pip3 install --target CEI/lambdas/cei-configuration/lambda-code urllib3
+      - pip3 install --target CEI/lambdas/cei-configuration/lambda-code urllib3 --use-feature=2020-resolver
       - ls -l CEI/lambdas/cei-configuration/lambda-code
-      - pip3 install --target CEI/lambdas/cei-configuration/lambda-code requests
+      - pip3 install --target CEI/lambdas/cei-configuration/lambda-code requests --use-feature=2020-resolver
       - ls -l CEI/lambdas/cei-configuration/lambda-code
       - ls -l lambdas/PipelineTestLambda1/LambdaCode
 
