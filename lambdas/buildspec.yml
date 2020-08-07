@@ -8,9 +8,12 @@ phases:
     commands:
     # Updating packages on container, and checking home path and python version for logging purposes.
       - pip --version
+      - pip3 --version
       - apt-get -qq update
       - pip install --upgrade pip
+      - pip3 install --upgrade pip3
       - pip --version
+      - pip3 --version
       - echo $HOME
       - which python3
       - python3 --version
