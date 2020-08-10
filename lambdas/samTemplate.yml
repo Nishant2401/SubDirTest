@@ -88,7 +88,7 @@ Resources:
 
 
   # Police (CEI) Lambdas
-  PipelineTestCEIConfiguration:
+  PipelineTest_CEIConfiguration:
     Type: 'AWS::Serverless::Function'
     Properties:
       FunctionName: PipelineTest-CEI-Configuration
