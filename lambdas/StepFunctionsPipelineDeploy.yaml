@@ -1,0 +1,363 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: This template creates CDF Step Functions that deletes or creates CDF entities when CSV files are uploaded to respective S3s. Also creates Cloudtrail, Cloudwatch Events, and S3 buckets required for this operation.
+Parameters:
+  env:
+    Type: String
+    AllowedValues: 
+      - contractor
+      - act
+      - production
+    Description: "Provide the environment you are deploying this on. Allowed values: contractor, act, or production"
+
+Resources:
+  CreateCDFEntities:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub create-cdf-entities-${env}
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: TRUE
+        BlockPublicPolicy: TRUE
+        IgnorePublicAcls: TRUE
+        RestrictPublicBuckets: TRUE
+
+  DeleteCDFEntities:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub delete-cdf-entities-${env}
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: TRUE
+        BlockPublicPolicy: TRUE
+        IgnorePublicAcls: TRUE
+        RestrictPublicBuckets: TRUE
+
+  InfraeventsCloudtrailStorage:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub infraevents-cloudtrail-storage-${env}
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: TRUE
+        BlockPublicPolicy: TRUE
+        IgnorePublicAcls: TRUE
+        RestrictPublicBuckets: TRUE
+
+  InfraeventsCloudtrailStoragePolicy: 
+    Type: AWS::S3::BucketPolicy
+    DependsOn: InfraeventsCloudtrailStorage
+    Properties: 
+      Bucket: 
+        Ref: InfraeventsCloudtrailStorage
+      PolicyDocument: 
+        Statement: 
+          - Effect: "Allow"
+            Action: "s3:GetBucketAcl"
+            Resource: !GetAtt InfraeventsCloudtrailStorage.Arn
+            Principal: 
+              "Service": "cloudtrail.amazonaws.com"
+        
+          - Effect: "Allow"
+            Action: "s3:PutObject"
+            Resource: !Sub ${InfraeventsCloudtrailStorage.Arn}/AWSLogs/* 
+            Principal:
+              "Service": "cloudtrail.amazonaws.com"
+            Condition: 
+              StringEquals: 
+                s3:x-amz-acl: 
+                  - "bucket-owner-full-control"
+
+  InfraEvents:
+    Type: AWS::CloudTrail::Trail
+    DependsOn: InfraeventsCloudtrailStoragePolicy
+    Properties:
+      TrailName: InfraEvents
+      IsLogging: TRUE
+      S3BucketName: !Sub ${InfraeventsCloudtrailStorage}
+      EventSelectors:
+        - IncludeManagementEvents: FALSE
+          ReadWriteType: WriteOnly
+          DataResources:
+          - Type: AWS::S3::Object
+            Values:
+              - !Sub ${DeleteCDFEntities.Arn}/
+              - !Sub ${CreateCDFEntities.Arn}/
+
+  CDFStepFunctions:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: CDFStepFunctions
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: states.amazonaws.com
+            Action: sts:AssumeRole
+      Path: /
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaRole
+      Policies:
+        - PolicyName: CDFStepFunctionsPolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - "xray:PutTraceSegments"
+                  - "xray:PutTelemetryRecords"
+                  - "xray:GetSamplingRules"
+                  - "xray:GetSamplingTargets"
+                Resource: '*'
+              - Effect: Allow
+                Action:
+                  - "logs:CreateLogDelivery"
+                  - "logs:GetLogDelivery"
+                  - "logs:UpdateLogDelivery"
+                  - "logs:DeleteLogDelivery"
+                  - "logs:ListLogDeliveries"
+                  - "logs:PutResourcePolicy"
+                  - "logs:DescribeResourcePolicies"
+                  - "logs:DescribeLogGroups"
+                Resource: '*'
+
+  LambdaDeploymentBasicExecution:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: LambdaDeploymentBasicExecution
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      Path: /
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+
+  S3TriggerForSFEvent:
+    Type: AWS::IAM::Role
+    DependsOn:
+      - ConsumeCSVDeleteCDF
+      - ConsumeCSVPopulateCDF
+    Properties:
+      RoleName: S3TriggerForSFEvent
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - events.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: S3TriggerForSFEventPolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action: "states:StartExecution"
+                Resource: 
+                  - !Ref 'ConsumeCSVDeleteCDF'
+                  - !Ref 'ConsumeCSVPopulateCDF'
+
+  S3TriggerForSFDeleteCDF:
+    Type: AWS::Events::Rule
+    DependsOn:
+      - S3TriggerForSFEvent
+      - DeleteCDFEntities
+      - ConsumeCSVDeleteCDF
+    Properties:
+      Name: S3TriggerForSFDeleteCDF
+      State: ENABLED
+      RoleArn: !GetAtt 'S3TriggerForSFEvent.Arn'
+      EventPattern:
+        source:
+          - "aws.s3"
+        detail-type:
+          - 'AWS API Call via CloudTrail'
+        detail:
+          eventSource:
+            - 's3.amazonaws.com'
+          eventName:
+            - 'PutObject'
+          requestParameters:
+            bucketName:
+              - !Sub ${DeleteCDFEntities}
+      Targets:
+        - RoleArn: !GetAtt 'S3TriggerForSFEvent.Arn'
+          Arn: !Ref 'ConsumeCSVDeleteCDF'
+          Id: ConsumeCSVDeleteCDF
+
+  S3TriggerForSFPopulateCDF:
+    Type: AWS::Events::Rule
+    DependsOn:
+      - S3TriggerForSFEvent
+      - CreateCDFEntities
+      - ConsumeCSVPopulateCDF
+    Properties:
+      Name: S3TriggerForSFPopulateCDF
+      State: ENABLED
+      RoleArn: !GetAtt 'S3TriggerForSFEvent.Arn'
+      EventPattern:
+        source:
+          - "aws.s3"
+        detail-type:
+          - 'AWS API Call via CloudTrail'
+        detail:
+          eventSource:
+            - 's3.amazonaws.com'
+          eventName:
+            - 'PutObject'
+          requestParameters:
+            bucketName:
+              - !Sub ${CreateCDFEntities}
+      Targets:
+        - RoleArn: !GetAtt 'S3TriggerForSFEvent.Arn'
+          Arn: !Ref 'ConsumeCSVPopulateCDF'
+          Id: ConsumeCSVPopulateCDF
+
+  # Step Function
+  ConsumeCSVDeleteCDF:
+    Type: AWS::StepFunctions::StateMachine
+    DependsOn: CDFStepFunctions
+    Properties:
+      StateMachineName: ConsumeCSVDeleteCDF
+      StateMachineType: STANDARD
+      RoleArn: !GetAtt 'CDFStepFunctions.Arn'
+      DefinitionString: !Sub |-
+        {
+          "Comment": "State machine deletes CDF entities and certs from csv file loaded to S3",
+          "StartAt": "setup",
+          "States": {
+             "setup": {
+              "Comment": "Set up initial values for state machine",
+              "Type": "Pass",
+              "Next": "ConsumeCSV"
+            },
+            "ConsumeCSV": {
+              "Type": "Task",
+              "Resource": "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:ConsumeCSV",
+              "ResultPath":"$.taskResult-bottoms-up-consume-csv",
+              "Next": "DeleteCDF"
+            },
+            "DeleteCDF": {
+              "Type": "Task",
+              "Resource": "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:DeleteCDF",
+              "ResultPath": "$.taskResult-delete-cdf-entity-and-cert",
+              "Next": "CheckEntityDelete"
+            },
+            "CheckEntityDelete": {
+              "Type": "Choice",
+              "InputPath": "$",
+              "Choices": [
+                {
+                  "Variable": "$.taskResult-delete-cdf-entity-and-cert[0]",
+                  "BooleanEquals": true,
+                  "Next": "done"
+                },
+                {
+                  "Variable": "$.taskResult-delete-cdf-entity-and-cert[0]",
+                  "BooleanEquals": false,
+                  "Next": "fail"
+                }]
+            },
+            "done": {
+              "Type": "Succeed"
+            },
+            "fail": {
+              "Type": "Fail"
+            }
+          }
+        }
+
+  ConsumeCSVPopulateCDF:
+    Type: AWS::StepFunctions::StateMachine
+    DependsOn: CDFStepFunctions
+    Properties:
+      StateMachineName: ConsumeCSVPopulateCDF
+      StateMachineType: STANDARD
+      RoleArn: !GetAtt 'CDFStepFunctions.Arn'
+      DefinitionString: !Sub |-
+        {
+          "Comment": "State machine creates CDF entities and certs from csv file loaded to S3",
+          "StartAt": "setup",
+          "States": {
+             "setup": {
+              "Comment": "Set up initial values for state machine",
+              "Type": "Pass",
+              "Result": {
+                "row_count": 1,
+                "header_row_number": 1
+              },
+              "ResultPath": "$.taskResult-consume-csv",
+              "Next": "ConsumeCSV"
+            },
+            "ConsumeCSV": {
+              "Type": "Task",
+              "Resource": "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:ConsumeCSV",
+              "ResultPath":"$.taskResult-consume-csv",
+              "Next": "CheckDone"
+            },
+            "CheckDone": {
+              "Type": "Choice",
+              "InputPath": "$",
+              "Choices": [ {
+                  "Variable": "$.taskResult-consume-csv.row_type",
+                  "StringEquals": "header",
+                  "Next": "ConsumeCSV"
+                },
+                {
+                  "Variable": "$.taskResult-consume-csv.row_type",
+                  "StringEquals": "content",
+                  "Next": "CreateJSON"
+                },
+                {
+                  "Variable": "$.taskResult-consume-csv.row_type",
+                  "StringEquals": "done",
+                  "Next": "done"
+                },
+                {
+                  "Variable": "$.taskResult-consume-csv.row_type",
+                  "StringEquals": "unknown",
+                  "Next": "UnknownRowType"
+                } ]
+            },
+            "CreateJSON": {
+              "Type": "Task",
+              "Resource": "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:CreateJSON",
+              "ResultPath": "$.taskResult-create-json",
+              "Next": "PopulateCDF"
+            },
+            "PopulateCDF": {
+              "Type": "Task",
+              "Resource": "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:PopulateCDF",
+              "ResultPath": "$.taskResult-create-cdf-entity-and-cert",
+              "Next": "CheckEntityCreate"
+            },
+            "CheckEntityCreate": {
+              "Type": "Choice",
+              "InputPath": "$",
+              "Choices": [
+                {
+                  "Variable": "$.taskResult-create-cdf-entity-and-cert[0]",
+                  "BooleanEquals": true,
+                  "Next": "ConsumeCSV"
+                },
+                {
+                  "Variable": "$.taskResult-create-cdf-entity-and-cert[0]",
+                  "BooleanEquals": false,
+                  "Next": "fail"
+                }]
+            },
+            "done": {
+              "Type": "Succeed"
+            },
+            "fail": {
+              "Type": "Fail"
+            },
+            "UnknownRowType": {
+              "Type": "Fail",
+              "Cause": "Unknown row found in CSV file",
+              "Error": "Error_Unknown_Row"
+            }
+          }
+        }
