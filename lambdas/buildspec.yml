@@ -23,6 +23,8 @@ phases:
       - pip3 install awscli -qq --use-feature=2020-resolver
       - pip3 install pytest -qq --use-feature=2020-resolver
       - pip3 install pytest-cov -qq --use-feature=2020-resolver
+      - aws --version
+      - pytest --version
       # - pip3 install --target lambdas/process-modem-data/lambda-code urllib3
       # - pip3 install --target lambdas/create-RTRADIO-msg/lambda-code urllib3
       # - ls -l lambdas/process-modem-data/lambda-code
