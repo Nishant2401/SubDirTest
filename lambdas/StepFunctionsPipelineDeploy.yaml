@@ -348,6 +348,12 @@ Resources:
       LogGroupName: /aws/stepfunction/ConsumeCSVDeleteCDFLogs
       RetentionInDays: 14
 
+  ConsumeCSVPopulateCDFLogs:
+    Type: AWS::Logs::LogGroup
+    Properties: 
+      LogGroupName: /aws/stepfunction/ConsumeCSVPopulateCDFLogs
+      RetentionInDays: 14
+
   # Step Function
   ConsumeCSVDeleteCDF:
     Type: AWS::StepFunctions::StateMachine
@@ -361,7 +367,6 @@ Resources:
         Destinations: 
           - CloudWatchLogsLogGroup:
               LogGroupArn: !GetAtt 'ConsumeCSVDeleteCDFLogs.Arn'
-
       DefinitionString: !Sub |-
         {
           "Comment": "State machine deletes CDF entities and certs from csv file loaded to S3",
@@ -414,6 +419,12 @@ Resources:
       StateMachineName: ConsumeCSVPopulateCDF
       StateMachineType: STANDARD
       RoleArn: !GetAtt 'CDFStepFunctions.Arn'
+      LoggingConfiguration:
+        IncludeExecutionData: true
+        Level: ALL
+        Destinations: 
+          - CloudWatchLogsLogGroup:
+              LogGroupArn: !GetAtt 'ConsumeCSVPopulateCDFLogs.Arn'
       DefinitionString: !Sub |-
         {
           "Comment": "State machine creates CDF entities and certs from csv file loaded to S3",
