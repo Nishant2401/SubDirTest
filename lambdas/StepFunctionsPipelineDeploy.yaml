@@ -225,8 +225,7 @@ Resources:
                 Action:
                   - "s3:GetObject"
                   - "s3:ListBucket"
-                Resource:
-                  Ref: 'CDFCertStore'
+                Resource: !GetAtt 'CDFCertStore.Arn'
               - Effect: Allow
                 Action:
                   - "iot:DeleteCACertificate"
@@ -260,8 +259,8 @@ Resources:
                 Action:
                   - "s3:GetObject"
                   - "s3:ListBucket"
-                Resource:
-                  Ref: 'CDFCertStore'
+                Resource: !GetAtt 'CDFCertStore.Arn'
+                  #Ref: 'CDFCertStore'
               - Effect: Allow
                 Action: 
                   - "iot:AcceptCertificateTransfer"
