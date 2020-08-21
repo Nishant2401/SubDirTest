@@ -231,7 +231,7 @@ Resources:
         # IncludeExecutionData: 'true'
         Level: ALL
         Destinations: 
-          CloudWatchLogsLogGroup:
+          - CloudWatchLogsLogGroup:
             LogGroupArn: !GetAtt 'ConsumeCSVDeleteCDFLogs.Arn'
 
       DefinitionString: !Sub |-
