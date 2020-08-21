@@ -98,7 +98,7 @@ Resources:
       Description: 'Handles the update mechanism for the CEI CDF Agency Configuration call'
       MemorySize: 128
       Timeout: 3
-      Role: !Ref LambdaRole
+      Role: arn:aws:iam::${AWS::AccountId}:role/Cloudformation_Role_Infra
       Environment:
         Variables:
           CDFURL: !Ref CDFURL
