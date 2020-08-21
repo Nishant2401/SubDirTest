@@ -40,6 +40,16 @@ Resources:
         IgnorePublicAcls: TRUE
         RestrictPublicBuckets: TRUE
 
+  CDFCertStore:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub cdf-cert-store-${env}
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: TRUE
+        BlockPublicPolicy: TRUE
+        IgnorePublicAcls: TRUE
+        RestrictPublicBuckets: TRUE
+
   InfraeventsCloudtrailStorage:
     Type: AWS::S3::Bucket
     Properties:
@@ -141,6 +151,125 @@ Resources:
       Path: /
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+
+  ConsumeCSV:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: ConsumeCSV
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      Path: /
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      Policies:
+        - PolicyName: ConsumeCSVPolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - "s3:GetObject"
+                  - "s3:ListBucket"
+                Resource: !GetAtt 'CreateCDFEntities.Arn'
+
+  ConsumeCSVForDeleteCDF:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: ConsumeCSVForDeleteCDF
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      Path: /
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      Policies:
+        - PolicyName: ConsumeCSVForDeleteCDFPolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - "s3:GetObject"
+                  - "s3:ListBucket"
+                Resource: !GetAtt 'DeleteCDFEntities.Arn'
+
+  DeleteCDF:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: DeleteCDF
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      Path: /
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      Policies:
+        - PolicyName: DeleteCDFPolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - "s3:GetObject"
+                  - "s3:ListBucket"
+                Resource:
+                  Ref: 'CDFCertStore'
+              - Effect: Allow
+                Action:
+                  - "iot:DeleteCACertificate"
+                  - "iot:DeleteCertificate"
+                  - "iot:DeletePolicy"
+                  - "iot:DeleteThing"
+                  - "iot:DeleteThingShadow"
+                  - "iot:DeleteThingGroup"
+                Resource: "*"
+
+  PopulateCDF:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: PopulateCDF
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      Path: /
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      Policies:
+        - PolicyName: PopulateCDFPolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - "s3:GetObject"
+                  - "s3:ListBucket"
+                Resource:
+                  Ref: 'CDFCertStore'
+              - Effect: Allow
+                Action: 
+                  - "iot:AcceptCertificateTransfer",
+                  - "iot:AttachPolicy",
+                  - "iot:CreateThing",
+                  - "iot:DescribeCACertificate",
+                  - "iot:DescribeCertificate"
+                Resource: "*"
 
   S3TriggerForSFEvent:
     Type: AWS::IAM::Role
