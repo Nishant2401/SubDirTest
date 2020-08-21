@@ -14,6 +14,8 @@ Parameters:
     Default: "LambdaRole"
     Description: "ARN for the default Lambda Role"
 
+  AccountId:
+    Type: String
 
 Resources:
 #   ProcessModemData:
