@@ -6,54 +6,43 @@ phases:
 
   pre_build:
     commands:
-    # Updating packages on container, installing AWSCLI and PyTest, and checking home path and python version for logging purposes.
+    # Updating packages on container, and checking home path and python version for logging purposes.
+      - pip --version
+      - pip3 --version
       - apt-get -qq update
+      - pip install --upgrade pip
+      - pip --version
+      - pip3 --version
       - echo $HOME
       - which python3
       - python3 --version
-      - pip3 --version
-      - pip install --upgrade pip
-      - pip3 --version
+
+  build:
+    commands:
+    # Installing AWSCLI, AWS SAM CLI, PyTest, and Requests package
       - pip3 install awscli -qq --use-feature=2020-resolver
       - pip3 install pytest -qq --use-feature=2020-resolver
       - pip3 install pytest-cov -qq --use-feature=2020-resolver
       - aws --version
       - pytest --version
-
-  build:
-    commands:
-    # ProcessModemData commands
-      - pip3 install --target lambdas/ProcessModemData/lambda-code urllib3 --use-feature=2020-resolver
-
-    # CreateRTRADIOMsg commands
-      - pip3 install --target lambdas/CreateRTRADIOMsg/lambda-code urllib3 --use-feature=2020-resolver
-
-    # CreateJSON commands
-      - pip3 install --target lambdas/CreateJSON/lambda-code urllib3 --use-feature=2020-resolver
-      - pip3 install --target lambdas/CreateJSON/lambda-code requests --use-feature=2020-resolver
-      - for file in agency.py asset_lib.py aws_cert_auth.py certs.py config_asset_lib.py device.py iot_core.py misc.py policy.py region.py status.py thing.py ui.py rootCA_openssl.conf subCA_openssl.conf Policy.templ rootCA.pem; do cp extras/aws-cert-auth/$file lambdas/CreateJSON/lambda-code/; done
-              
-    # PopulateCDF commands
-      - pip3 install --target lambdas/PopulateCDF/lambda-code urllib3 --use-feature=2020-resolver
-      - pip3 install --target lambdas/PopulateCDF/lambda-code requests --use-feature=2020-resolver
-      - for file in agency.py asset_lib.py aws_cert_auth.py certs.py config_asset_lib.py device.py iot_core.py misc.py policy.py region.py status.py thing.py ui.py rootCA_openssl.conf subCA_openssl.conf Policy.templ rootCA.pem; do cp extras/aws-cert-auth/$file lambdas/PopulateCDF/lambda-code/; done
-
-    # DeleteCDF commands
-      - pip3 install --target lambdas/DeleteCDF/lambda-code urllib3 --use-feature=2020-resolver
-      - pip3 install --target lambdas/DeleteCDF/lambda-code requests --use-feature=2020-resolver
-      - for file in agency.py asset_lib.py aws_cert_auth.py certs.py config_asset_lib.py device.py iot_core.py misc.py policy.py region.py status.py thing.py ui.py rootCA_openssl.conf subCA_openssl.conf Policy.templ rootCA.pem; do cp extras/aws-cert-auth/$file lambdas/DeleteCDF/lambda-code/; done
-
-
-    # Confirming Lambda files
-      - ls -l lambdas/ProcessModemData/lambda-code lambdas/CreateRTRADIOMsg/lambda-code lambdas/CreateJSON/lambda-code lambdas/ConsumeCSV/lambda-code lambdas/ConsumeCSVForDeleteCDF/lambda-code lambdas/PopulateCDF/lambda-code lambdas/DeleteCDF/lambda-code
+      # - pip3 install --target lambdas/process-modem-data/lambda-code urllib3
+      # - pip3 install --target lambdas/create-RTRADIO-msg/lambda-code urllib3
+      # - ls -l lambdas/process-modem-data/lambda-code
+      # - ls -l lambdas/create-RTRADIO-msg/lambda-code
+      - pwd
+      - ls -l
+      - pip3 install --target CEI/lambdas/cei-configuration/lambda-code urllib3 --use-feature=2020-resolver
+      - ls -l CEI/lambdas/cei-configuration/lambda-code
+      - pip3 install --target CEI/lambdas/cei-configuration/lambda-code requests --use-feature=2020-resolver
+      - ls -l CEI/lambdas/cei-configuration/lambda-code
+      - ls -l lambdas/PipelineTestLambda1/LambdaCode
 
     # Executing SAM template
       - aws cloudformation package --template-file lambdas/samTemplate.yml --s3-bucket $S3_Bucket --output-template-file outputSamTemplate.yaml
-    
-    # Placeholder for commands to launch pytest for future Lambdas - Lambda1 and Lambda2
-    # - python3 -B -m pytest -v lambdas/create-json/tests/create-json-test.py --cov=.
-    # - python3 -B -m pytest -v Lambdas/Lambda2/Tests/ --cov=.
-
+      
+    # Placeholder for commands to launch pytest for future Lambdas - Lambda1 and Lambda2  
+      - python3 -B -m pytest -v lambdas/PipelineTestLambda1/Tests/test_handler.py --cov=.
+      - python3 -B -m pytest -v lambdas/PipelineTestLambda2/Tests/ --cov=.
 
 artifacts:
   type: zip
