@@ -232,7 +232,7 @@ Resources:
         Level: ALL
         Destinations: 
           - CloudWatchLogsLogGroup:
-            LogGroupArn: !GetAtt 'ConsumeCSVDeleteCDFLogs.Arn'
+              LogGroupArn: !GetAtt 'ConsumeCSVDeleteCDFLogs.Arn'
 
       DefinitionString: !Sub |-
         {
