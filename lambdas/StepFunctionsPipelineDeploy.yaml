@@ -218,7 +218,7 @@ Resources:
     Type: AWS::Logs::LogGroup
     Properties: 
       LogGroupName: /aws/stepfunction/ConsumeCSVDeleteCDFLogs
-      RetentionInDays: 15
+      RetentionInDays: 14
 
   # Step Function
   ConsumeCSVDeleteCDF:
