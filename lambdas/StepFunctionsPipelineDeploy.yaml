@@ -228,7 +228,7 @@ Resources:
       StateMachineType: STANDARD
       RoleArn: !GetAtt 'CDFStepFunctions.Arn'
       LoggingConfiguration:
-        IncludeExecutionData: 'true'
+        # IncludeExecutionData: 'true'
         Level: ALL
         Destinations: 
           CloudWatchLogsLogGroup:
