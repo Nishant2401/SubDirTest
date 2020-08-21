@@ -9,11 +9,6 @@ Parameters:
     Default: "CDFURL"
     Description: "CDF url for the lambda"
 
-  CERTBKT:
-    Type: 'AWS::SSM::Parameter::Value<String>'
-    Default: "CERTBKT"
-    Description: "Name of the S3 bucket holding certs"
-
   LambdaRole:
     Type: 'AWS::SSM::Parameter::Value<String>'
     Default: "LambdaRole"
@@ -21,104 +16,90 @@ Parameters:
 
 
 Resources:
-  ProcessModemData:
-    Type: 'AWS::Serverless::Function'
-    Properties:
-      FunctionName: ProcessModemData
-      Handler: ProcessModemData.lambda_handler
-      Runtime: python3.8
-      CodeUri: ./ProcessModemData/lambda-code
-      Description: 'Store required Modem MQTT data in CDF'
-      MemorySize: 128
-      Timeout: 5
-      Role: !Ref LambdaRole
-      Environment:
-        Variables:
-          CDFURL: !Ref CDFURL
+#   ProcessModemData:
+#     Type: 'AWS::Serverless::Function'
+#     Properties:
+#       FunctionName: Process-Modem-Data
+#       Handler: process-modem-data.lambda_handler
+#       Runtime: python3.8
+#       CodeUri: ./process-modem-data/lambda-code
+#       Description: 'Store required Modem MQTT data in CDF'
+#       MemorySize: 128
+#       Timeout: 30
+#       Role: !Ref LambdaRole
+#       Environment:
+#         Variables:
+#           CDF_URL: !Ref CDFURL
+#           # CDF Contractor URL
 
-  CreateRTRADIOMsg:
-    Type: 'AWS::Serverless::Function'
-    Properties:
-      FunctionName: CreateRTRADIOMsg
-      Handler: CreateRTRADIOMsg.lambda_handler
-      Runtime: python3.8
-      CodeUri: ./CreateRTRADIOMsg/lambda-code
-      Description: 'Get data from CDF and construct RTRADIO message'
-      MemorySize: 128
-      Timeout: 5
-      Role: !Ref LambdaRole
-      Environment:
-        Variables:
-          CDFURL: !Ref CDFURL
 
-  CreateJSON:
-    Type: 'AWS::Serverless::Function'
-    Properties:
-      FunctionName: CreateJSON
-      Handler: CreateJSON.lambda_handler
-      Runtime: python3.8
-      CodeUri: ./CreateJSON/lambda-code
-      Description: 'Create json from raw data'
-      MemorySize: 128
-      Timeout: 30
-      Role: !Ref LambdaRole
-      Environment:
-        Variables:
-          CDFURL: !Ref CDFURL
-          CERTBKT: !Ref CERTBKT
+  # CreateRTRADIOMsg:
+  #   Type: 'AWS::Serverless::Function'
+  #   Properties:
+  #     FunctionName: Create-RTRADIO-Msg
+  #     Handler: create-RTRADIO-msg.lambda_handler
+  #     Runtime: python3.8
+  #     CodeUri: ./create-RTRADIO-msg/lambda-code
+  #     Description: 'Get data from CDF and construct RTRADIO message'
+  #     MemorySize: 128
+  #     Timeout: 30
+  #     Role: !Ref LambdaRole
+  #     Environment:
+  #       Variables:
+  #         CDF_URL: !Ref CDFURL
+  #         # CDF Contractor URL
 
-  ConsumeCSV:
-    Type: 'AWS::Serverless::Function'
-    Properties:
-      FunctionName: ConsumeCSV
-      Handler: ConsumeCSV.lambda_handler
-      Runtime: python3.8
-      CodeUri: ./ConsumeCSV/lambda-code
-      Description: 'Load CSV file, read row, and pass contents out to Step Function'
-      MemorySize: 128
-      Timeout: 30
-      Role: !Ref LambdaRole
+  # CreateJSON:
+  #   Type: 'AWS::Serverless::Function'
+  #   Properties:
+  #     FunctionName: Create-JSON
+  #     Handler: create-json.lambda_handler
+  #     Runtime: python3.8
+  #     CodeUri: ./create-json/lambda-code
+  #     Description: 'Create json from raw data'
+  #     MemorySize: 128
+  #     Timeout: 30
+  #     Role: !Ref LambdaRole
 
-  ConsumeCSVForDeleteCDF:
+  PipelineTestLambda1:
     Type: 'AWS::Serverless::Function'
     Properties:
-      FunctionName: ConsumeCSVForDeleteCDF
-      Handler: ConsumeCSVForDeleteCDF.lambda_handler
-      Runtime: python3.8
-      CodeUri: ./ConsumeCSVForDeleteCDF/lambda-code
-      Description: 'Read all entities in CSV to allow them to be removed from the system'
+      FunctionName: PipelineTestLambda1
+      Handler: lambda_function.lambda_handler
+      Runtime: python3.6
+      CodeUri: ./PipelineTestLambda1/LambdaCode
+      Description: 'Lambda for pipeline test - dont delete'
       MemorySize: 128
       Timeout: 30
       Role: !Ref LambdaRole
 
-  PopulateCDF:
-    Type: 'AWS::Serverless::Function'
-    Properties:
-      FunctionName: PopulateCDF
-      Handler: PopulateCDF.lambda_handler
-      Runtime: python3.7
-      CodeUri: ./PopulateCDF/lambda-code
-      Description: 'Create cert(s) and CDF entity from json data'
-      MemorySize: 128
-      Timeout: 30
-      Role: !Ref LambdaRole
-      Environment:
-        Variables:
-          CDFURL: !Ref CDFURL
-          CERTBKT: !Ref CERTBKT
 
-  DeleteCDF:
+  PipelineTestLambda2:
     Type: 'AWS::Serverless::Function'
     Properties:
-      FunctionName: DeleteCDF
-      Handler: DeleteCDF.lambda_handler
-      Runtime: python3.7
-      CodeUri: ./DeleteCDF/lambda-code
-      Description: 'Remove specified entity from CDF'
+      FunctionName: PipelineTestLambda2
+      Handler: lambda_function.lambda_handler
+      Runtime: python3.6
+      CodeUri: ./PipelineTestLambda2/LambdaCode
+      Description: 'Yet another Lambda for pipeline test'
       MemorySize: 128
       Timeout: 30
       Role: !Ref LambdaRole
+
+
+  # Police (CEI) Lambdas
+  PipelineTestCEIConfiguration:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      FunctionName: PipelineTest-CEI-Configuration
+      Handler: CEI_Configuration/CEI_Configuration.configurationHandler
+      Runtime: python3.8
+      CodeUri: ../CEI/lambdas/cei-configuration/lambda-code
+      Description: 'Handles the update mechanism for the CEI CDF Agency Configuration call'
+      MemorySize: 128
+      Timeout: 3
+      Role: !Ref LambdaRole
       Environment:
         Variables:
-          CDFURL: !Ref CDFURL
-          CERTBKT: !Ref CERTBKT
+          CDF_URL: !Ref CDFURL
+          # CDF URL
