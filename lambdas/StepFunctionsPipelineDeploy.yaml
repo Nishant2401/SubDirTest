@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: "2010-09-09"
-Description: This template creates CDF Step Functions that deletes or creates CDF entities when CSV files are uploaded to respective S3s. Also creates Cloudtrail, Cloudwatch Events, and S3 buckets required for this operation.
+Description: This template creates CDF Step Functions that delete or create CDF entities when CSV files are uploaded to respective S3s. Also creates other resources required for this operation, like Cloudtrail, Cloudwatch Events, and S3 buckets, etc.
 Parameters:
   env:
     Type: String
@@ -10,6 +10,16 @@ Parameters:
     Description: "Provide the environment you are deploying this on. Allowed values: contractor, act, or production"
 
 Resources:
+  LambdaRole:
+    Type: AWS::SSM::Parameter
+    Properties: 
+      DataType: text
+      Description: "Default role to be assumed by Lambdas which are deployed via LambdaDeployment pipeline. The role has basic execution permissions"
+      Name: LambdaRole
+      Tier: Standard
+      Type: String
+      Value: !GetAtt 'LambdaDeploymentBasicExecution.Arn'
+
   CreateCDFEntities:
     Type: AWS::S3::Bucket
     Properties:
@@ -42,7 +52,6 @@ Resources:
 
   InfraeventsCloudtrailStoragePolicy: 
     Type: AWS::S3::BucketPolicy
-    DependsOn: InfraeventsCloudtrailStorage
     Properties: 
       Bucket: 
         Ref: InfraeventsCloudtrailStorage
@@ -135,9 +144,6 @@ Resources:
 
   S3TriggerForSFEvent:
     Type: AWS::IAM::Role
-    DependsOn:
-      - ConsumeCSVDeleteCDF
-      - ConsumeCSVPopulateCDF
     Properties:
       RoleName: S3TriggerForSFEvent
       AssumeRolePolicyDocument:
@@ -161,10 +167,6 @@ Resources:
 
   S3TriggerForSFDeleteCDF:
     Type: AWS::Events::Rule
-    DependsOn:
-      - S3TriggerForSFEvent
-      - DeleteCDFEntities
-      - ConsumeCSVDeleteCDF
     Properties:
       Name: S3TriggerForSFDeleteCDF
       State: ENABLED
@@ -184,15 +186,12 @@ Resources:
               - !Sub ${DeleteCDFEntities}
       Targets:
         - RoleArn: !GetAtt 'S3TriggerForSFEvent.Arn'
-          Arn: !Ref 'ConsumeCSVDeleteCDF'
+          #Arn: !Ref 'ConsumeCSVDeleteCDF'
+          Arn: !GetAtt 'ConsumeCSVDeleteCDF.Arn'
           Id: ConsumeCSVDeleteCDF
 
   S3TriggerForSFPopulateCDF:
     Type: AWS::Events::Rule
-    DependsOn:
-      - S3TriggerForSFEvent
-      - CreateCDFEntities
-      - ConsumeCSVPopulateCDF
     Properties:
       Name: S3TriggerForSFPopulateCDF
       State: ENABLED
@@ -215,14 +214,26 @@ Resources:
           Arn: !Ref 'ConsumeCSVPopulateCDF'
           Id: ConsumeCSVPopulateCDF
 
+  ConsumeCSVDeleteCDFLogs:
+    Type: AWS::Logs::LogGroup
+    Properties: 
+      LogGroupName: /aws/stepfunction/ConsumeCSVDeleteCDFLogs
+      RetentionInDays: 15
+
   # Step Function
   ConsumeCSVDeleteCDF:
     Type: AWS::StepFunctions::StateMachine
-    DependsOn: CDFStepFunctions
     Properties:
       StateMachineName: ConsumeCSVDeleteCDF
       StateMachineType: STANDARD
       RoleArn: !GetAtt 'CDFStepFunctions.Arn'
+      LoggingConfiguration:
+        IncludeExecutionData: TRUE
+        Level: ALL
+        Destinations: 
+          CloudWatchLogsLogGroup:
+            LogGroupArn: !GetAtt 'ConsumeCSVDeleteCDFLogs.Arn'
+
       DefinitionString: !Sub |-
         {
           "Comment": "State machine deletes CDF entities and certs from csv file loaded to S3",
@@ -231,11 +242,11 @@ Resources:
              "setup": {
               "Comment": "Set up initial values for state machine",
               "Type": "Pass",
-              "Next": "ConsumeCSV"
+              "Next": "ConsumeCSVForDeleteCDF"
             },
-            "ConsumeCSV": {
+            "ConsumeCSVForDeleteCDF": {
               "Type": "Task",
-              "Resource": "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:ConsumeCSV",
+              "Resource": "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:ConsumeCSVForDeleteCDF",
               "ResultPath":"$.taskResult-bottoms-up-consume-csv",
               "Next": "DeleteCDF"
             },
@@ -271,7 +282,6 @@ Resources:
 
   ConsumeCSVPopulateCDF:
     Type: AWS::StepFunctions::StateMachine
-    DependsOn: CDFStepFunctions
     Properties:
       StateMachineName: ConsumeCSVPopulateCDF
       StateMachineType: STANDARD
