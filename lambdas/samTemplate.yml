@@ -101,5 +101,5 @@ Resources:
       Role: !Ref LambdaRole
       Environment:
         Variables:
-          CDF_URL: !Ref CDFURL
+          CDFURL: !Ref CDFURL
           # CDF URL
