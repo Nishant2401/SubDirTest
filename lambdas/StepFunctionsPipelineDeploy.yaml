@@ -162,7 +162,7 @@ Resources:
               - Effect: Allow
                 Action: "states:StartExecution"
                 Resource: 
-                  # - !Ref 'ConsumeCSVDeleteCDF'
+                  - !Ref 'ConsumeCSVDeleteCDF'
                   - !Ref 'ConsumeCSVPopulateCDF'
 
   S3TriggerForSFDeleteCDF:
@@ -184,11 +184,11 @@ Resources:
           requestParameters:
             bucketName:
               - !Sub ${DeleteCDFEntities}
-      # Targets:
-      #   - RoleArn: !GetAtt 'S3TriggerForSFEvent.Arn'
-      #     #Arn: !Ref 'ConsumeCSVDeleteCDF'
-      #     Arn: !GetAtt 'ConsumeCSVDeleteCDF.Arn'
-      #     Id: ConsumeCSVDeleteCDF
+      Targets:
+        - RoleArn: !GetAtt 'S3TriggerForSFEvent.Arn'
+          #Arn: !Ref 'ConsumeCSVDeleteCDF'
+          Arn: !GetAtt 'ConsumeCSVDeleteCDF.Arn'
+          Id: ConsumeCSVDeleteCDF
 
   S3TriggerForSFPopulateCDF:
     Type: AWS::Events::Rule
@@ -220,65 +220,65 @@ Resources:
       LogGroupName: /aws/stepfunction/ConsumeCSVDeleteCDFLogs
       RetentionInDays: 14
 
-  # # Step Function
-  # ConsumeCSVDeleteCDF:
-  #   Type: AWS::StepFunctions::StateMachine
-  #   Properties:
-  #     StateMachineName: ConsumeCSVDeleteCDF
-  #     StateMachineType: STANDARD
-  #     RoleArn: !GetAtt 'CDFStepFunctions.Arn'
-  #     LoggingConfiguration:
-  #       # IncludeExecutionData: 'true'
-  #       Level: ALL
-  #       Destinations: 
-  #         - CloudWatchLogsLogGroup:
-  #             LogGroupArn: !GetAtt 'ConsumeCSVDeleteCDFLogs.Arn'
+  # Step Function
+  ConsumeCSVDeleteCDF:
+    Type: AWS::StepFunctions::StateMachine
+    Properties:
+      StateMachineName: ConsumeCSVDeleteCDF
+      StateMachineType: STANDARD
+      RoleArn: !GetAtt 'CDFStepFunctions.Arn'
+      LoggingConfiguration:
+        # IncludeExecutionData: 'true'
+        Level: ALL
+        Destinations: 
+          - CloudWatchLogsLogGroup:
+              LogGroupArn: !GetAtt 'ConsumeCSVDeleteCDFLogs.Arn'
 
-  #     DefinitionString: !Sub |-
-  #       {
-  #         "Comment": "State machine deletes CDF entities and certs from csv file loaded to S3",
-  #         "StartAt": "setup",
-  #         "States": {
-  #            "setup": {
-  #             "Comment": "Set up initial values for state machine",
-  #             "Type": "Pass",
-  #             "Next": "ConsumeCSVForDeleteCDF"
-  #           },
-  #           "ConsumeCSVForDeleteCDF": {
-  #             "Type": "Task",
-  #             "Resource": "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:ConsumeCSVForDeleteCDF",
-  #             "ResultPath":"$.taskResult-bottoms-up-consume-csv",
-  #             "Next": "DeleteCDF"
-  #           },
-  #           "DeleteCDF": {
-  #             "Type": "Task",
-  #             "Resource": "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:DeleteCDF",
-  #             "ResultPath": "$.taskResult-delete-cdf-entity-and-cert",
-  #             "Next": "CheckEntityDelete"
-  #           },
-  #           "CheckEntityDelete": {
-  #             "Type": "Choice",
-  #             "InputPath": "$",
-  #             "Choices": [
-  #               {
-  #                 "Variable": "$.taskResult-delete-cdf-entity-and-cert[0]",
-  #                 "BooleanEquals": true,
-  #                 "Next": "done"
-  #               },
-  #               {
-  #                 "Variable": "$.taskResult-delete-cdf-entity-and-cert[0]",
-  #                 "BooleanEquals": false,
-  #                 "Next": "fail"
-  #               }]
-  #           },
-  #           "done": {
-  #             "Type": "Succeed"
-  #           },
-  #           "fail": {
-  #             "Type": "Fail"
-  #           }
-  #         }
-  #       }
+      DefinitionString: !Sub |-
+        {
+          "Comment": "State machine deletes CDF entities and certs from csv file loaded to S3",
+          "StartAt": "setup",
+          "States": {
+             "setup": {
+              "Comment": "Set up initial values for state machine",
+              "Type": "Pass",
+              "Next": "ConsumeCSVForDeleteCDF"
+            },
+            "ConsumeCSVForDeleteCDF": {
+              "Type": "Task",
+              "Resource": "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:ConsumeCSVForDeleteCDF",
+              "ResultPath":"$.taskResult-bottoms-up-consume-csv",
+              "Next": "DeleteCDF"
+            },
+            "DeleteCDF": {
+              "Type": "Task",
+              "Resource": "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:DeleteCDF",
+              "ResultPath": "$.taskResult-delete-cdf-entity-and-cert",
+              "Next": "CheckEntityDelete"
+            },
+            "CheckEntityDelete": {
+              "Type": "Choice",
+              "InputPath": "$",
+              "Choices": [
+                {
+                  "Variable": "$.taskResult-delete-cdf-entity-and-cert[0]",
+                  "BooleanEquals": true,
+                  "Next": "done"
+                },
+                {
+                  "Variable": "$.taskResult-delete-cdf-entity-and-cert[0]",
+                  "BooleanEquals": false,
+                  "Next": "fail"
+                }]
+            },
+            "done": {
+              "Type": "Succeed"
+            },
+            "fail": {
+              "Type": "Fail"
+            }
+          }
+        }
 
   ConsumeCSVPopulateCDF:
     Type: AWS::StepFunctions::StateMachine
