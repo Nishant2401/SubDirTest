@@ -162,7 +162,7 @@ Resources:
               - Effect: Allow
                 Action: "states:StartExecution"
                 Resource: 
-                  - !Ref 'ConsumeCSVDeleteCDF'
+                  # - !Ref 'ConsumeCSVDeleteCDF'
                   - !Ref 'ConsumeCSVPopulateCDF'
 
   S3TriggerForSFDeleteCDF:
@@ -184,11 +184,11 @@ Resources:
           requestParameters:
             bucketName:
               - !Sub ${DeleteCDFEntities}
-      Targets:
-        - RoleArn: !GetAtt 'S3TriggerForSFEvent.Arn'
-          #Arn: !Ref 'ConsumeCSVDeleteCDF'
-          Arn: !GetAtt 'ConsumeCSVDeleteCDF.Arn'
-          Id: ConsumeCSVDeleteCDF
+      # Targets:
+      #   - RoleArn: !GetAtt 'S3TriggerForSFEvent.Arn'
+      #     #Arn: !Ref 'ConsumeCSVDeleteCDF'
+      #     Arn: !GetAtt 'ConsumeCSVDeleteCDF.Arn'
+      #     Id: ConsumeCSVDeleteCDF
 
   S3TriggerForSFPopulateCDF:
     Type: AWS::Events::Rule
